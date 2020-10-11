@@ -21,11 +21,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         build_type: [Release, Debug]
     runs-on: ${{ matrix.os }}
-    env:
-      BUILD_TYPE: ${{ matrix.build_type }}
     steps:
       - uses: actions/checkout@v2
 
       - name: Build
-        run: rake build
-        working-directory: lit
+        run: |
+          cmake -S lit -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build build
