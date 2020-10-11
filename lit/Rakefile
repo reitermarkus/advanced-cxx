@@ -1,7 +1,7 @@
 BUILD_DIR = 'build'
 
 task :build do
-  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '--build', '.'
+  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, *ENV['BUILD_TYPE'].dup&.prepend('-DCMAKE_BUILD_TYPE='), '--build', '.'
   sh 'ninja', '-C', BUILD_DIR, '-v'
 end
 
