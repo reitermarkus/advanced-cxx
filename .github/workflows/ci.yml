@@ -28,3 +28,6 @@ jobs:
         run: |
           cmake -S lit -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build -v
+        env:
+          CC: gcc-10
+          CXX: g++-10
