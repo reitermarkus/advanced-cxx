@@ -14,11 +14,19 @@ namespace command {
 
 class Help: public Command {
   public:
-  string name() const override { return "help"; }
-
-  string description() const override { return "Show help information."; }
+  string name() const override {
+    return "help";
+  }
+  string description() const override {
+    return "Show help information.";
+  }
 
   int run(vector<string>& arguments) override {
+    if (!arguments.empty()) {
+      cerr << "This command does not support arguments." << endl;
+      return 1;
+    }
+
     auto commands = Command::list();
 
     auto max_name_length = [](size_t acc, unique_ptr<Command>& command) { return max(acc, command->name().length()); };

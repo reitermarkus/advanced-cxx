@@ -1,6 +1,7 @@
 BasedOnStyle: LLVM
 AccessModifierOffset: 0
 AlignEscapedNewlines: DontAlign
+AllowShortFunctionsOnASingleLine: Empty
 ColumnLimit: 120
 FixNamespaceComments: false
 KeepEmptyLinesAtTheStartOfBlocks: false
