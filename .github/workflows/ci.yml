@@ -26,6 +26,8 @@ jobs:
 
       - name: Build
         run: |
+          brew install gcc
+
           cmake -S lit -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build build -v
         env:
