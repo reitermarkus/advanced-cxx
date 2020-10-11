@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 BUILD_DIR = 'build'
 
 task :build do
@@ -5,7 +7,7 @@ task :build do
   sh 'ninja', '-C', BUILD_DIR, '-v'
 end
 
-task :run => :build do
+task run: :build do
   sh File.join(BUILD_DIR, 'lit'), 'help'
 end
 
@@ -14,8 +16,13 @@ task :format do
   sh 'clang-format', '-i', *Dir.glob('**/*.{c,h}xx')
 end
 
+task :lint do
+  sh 'rubocop'
+  sh 'clang-format', *Dir.glob('**/*.{c,h}xx')
+end
+
 task :clean do
   rm_rf BUILD_DIR
 end
 
-task :default => :build
+task default: :build
