@@ -1,0 +1,30 @@
+name: CI
+
+on: 
+  - push
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        build_type: [Release, Debug]
+    runs-on: ${{ matrix.os }}
+    env: 
+      BUILD_TYPE: ${{ matrix.build_type }}
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Run rubocop
+      uses: reviewdog/action-rubocop@v1
+      with:
+        workdir: lit
+
+    - name: Run clang-format
+      uses: DoozyX/clang-format-lint-action@v0.10
+      with:
+        source: lit
+
+    - name: Build
+      run: rake build
+      working-directory: lit
