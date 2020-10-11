@@ -27,4 +27,4 @@ jobs:
       - name: Build
         run: |
           cmake -S lit -B build -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          cmake --build build
+          cmake --build build -v
