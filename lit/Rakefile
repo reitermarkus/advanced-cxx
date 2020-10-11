@@ -3,7 +3,7 @@
 BUILD_DIR = 'build'
 
 task :build do
-  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_BUILD_TYPE=DEBUG'
+  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '-DCMAKE_BUILD_TYPE=Debug'
   sh 'cmake', '--build', BUILD_DIR, '-v'
 end
 
