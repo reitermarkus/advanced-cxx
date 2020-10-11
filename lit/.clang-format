@@ -1,0 +1,10 @@
+BasedOnStyle: LLVM
+AccessModifierOffset: 0
+AlignEscapedNewlines: DontAlign
+ColumnLimit: 120
+FixNamespaceComments: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+PointerAlignment: Left
+SpaceBeforeCtorInitializerColon: false
+SpaceBeforeInheritanceColon: false
+SpaceBeforeRangeBasedForLoopColon: false
