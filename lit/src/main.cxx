@@ -8,19 +8,18 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  vector<string> arguments(argv + 1, argv + argc);
-
-  auto commands = Command::list();
-
-  if (arguments.empty()) {
+  if (argc == 1) {
     cerr << "No subcommand given." << endl;
     return 1;
   }
 
-  auto command_name = arguments.at(0);
+  auto command_name = string(argv[1]);
+
+  auto commands = Command::list();
 
   for (auto& command: commands) {
     if (command->name() == command_name) {
+      vector<string> arguments(argv + 2, argv + argc);
       return command->run(arguments);
     }
   }
