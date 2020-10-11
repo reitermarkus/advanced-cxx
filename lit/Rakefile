@@ -1,0 +1,21 @@
+BUILD_DIR = 'build'
+
+task :build do
+  sh 'cmake', '-G', 'Ninja', '-B', BUILD_DIR, '--build', '.'
+  sh 'ninja', '-C', BUILD_DIR, '-v'
+end
+
+task :run => :build do
+  sh File.join(BUILD_DIR, 'lit'), 'help'
+end
+
+task :format do
+  sh 'rubocop', '--fix'
+  sh 'clang-format', '-i', *Dir.glob('**/*.{c,h}xx')
+end
+
+task :clean do
+  rm_rf BUILD_DIR
+end
+
+task :default => :build
