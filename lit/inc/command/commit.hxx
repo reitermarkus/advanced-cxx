@@ -68,7 +68,6 @@ class Commit: public Command {
     meta << "Date: " << chrono::system_clock::to_time_t(commit_date) << endl;
     meta << endl;
     meta << commit_message << endl;
-    meta << endl;
 
     auto file_statuses = repo.status();
 

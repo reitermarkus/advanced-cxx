@@ -131,8 +131,10 @@ class Repository {
   }
 
   Revision read_revision() {
-    ifstream file(path);
+    ifstream file(revision_file());
     string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    id.pop_back();
+
     return Revision(id);
   }
 

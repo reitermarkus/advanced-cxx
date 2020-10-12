@@ -1,6 +1,10 @@
 #pragma once
 
+#include <fstream>
+
 #include "command.hxx"
+#include "repository.hxx"
+#include "revision.hxx"
 
 using namespace std;
 
@@ -23,7 +27,21 @@ class Show: public Command {
 
     auto repo = Repository();
 
-    cout << repo.revision().value().id() << endl;
+    optional<Revision> revision;
+
+    if (arguments.size() == 1) {
+      revision = optional(Revision(arguments[0]));
+    } else {
+      revision = repo.revision();
+    }
+
+    ifstream meta(repo.revisions_dir() / revision.value().meta_filename());
+    cout << meta.rdbuf();
+
+    cout << endl;
+
+    ifstream patch(repo.revisions_dir() / revision.value().patch_filename());
+    cout << patch.rdbuf();
 
     return 0;
   }
