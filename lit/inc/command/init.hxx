@@ -17,7 +17,7 @@ class Init: public Command {
     return "init";
   }
   string description() const override {
-    return "Initialize a repository.";
+    return "Create an empty Lit repository or reinitialize an existing one";
   }
 
   int run(vector<string>& arguments) override {
@@ -29,7 +29,7 @@ class Init: public Command {
     auto repo = Repository();
     auto lit_dir = string(repo.lit_dir());
     if (repo.is_initialized()) {
-      cout << "Re-initialized existing Lit repository in " << lit_dir << endl;
+      cout << "Reinitialized existing Lit repository in " << lit_dir << endl;
     } else {
       repo.initialize();
       cout << "Initialized empty Lit repository in " << lit_dir << endl;

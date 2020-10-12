@@ -18,7 +18,7 @@ class Help: public Command {
     return "help";
   }
   string description() const override {
-    return "Show help information.";
+    return "Display help information about Lit.";
   }
 
   int run(vector<string>& arguments) override {
