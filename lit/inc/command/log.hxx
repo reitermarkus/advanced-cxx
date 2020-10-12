@@ -24,6 +24,29 @@ class Log: public Command {
 
     auto repo = Repository();
 
+    auto revision = repo.latest_revision().value();
+    auto current_revision = repo.current_revision().value();
+
+    auto commit = repo.commit(revision);
+
+    while (true) {
+      cout << "o ";
+
+      if (commit.revision().number() == current_revision.number()) {
+        cout << "← ";
+      } else {
+        cout << "  ";
+      }
+
+      cout << commit.id() << " \"" << commit.message() << "\"" << endl;
+
+      if (commit.parent_a()) {
+        commit = repo.commit(commit.parent_a().value());
+      } else {
+        break;
+      }
+    }
+
     return 0;
   }
 };

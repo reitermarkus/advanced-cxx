@@ -174,4 +174,9 @@ class Repository {
   void checkout(Revision revision) {
     write_revision(revision);
   }
+
+  Commit commit(Revision revision) {
+    ifstream meta(revisions_dir() / revision.meta_filename());
+    return Commit::deserialize(meta);
+  }
 };

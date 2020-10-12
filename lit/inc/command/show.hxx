@@ -35,8 +35,7 @@ class Show: public Command {
       revision = repo.current_revision();
     }
 
-    ifstream meta(repo.revisions_dir() / revision.value().meta_filename());
-    auto commit = ::Commit::deserialize(meta);
+    auto commit = repo.commit(revision.value());
     commit.pretty_print(cout);
 
     cout << endl;
