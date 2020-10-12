@@ -80,7 +80,7 @@ class Repository {
       if (existed_previously) {
         auto diff = Diff(path, comparison_path);
 
-        if (!diff.is_empty()) {
+        if (diff.is_changed()) {
           file_statuses[string(new_path)] = Modified;
         }
       } else {
