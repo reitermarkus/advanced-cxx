@@ -17,19 +17,19 @@ class Revision {
     this->number_ = number;
   }
 
-  unsigned long number() {
+  unsigned long number() const {
     return this->number_;
   }
 
-  string id() {
+  string id() const {
     return "r" + to_string(number());
   }
 
-  string meta_filename() {
+  string meta_filename() const {
     return id() + ".txt";
   }
 
-  string patch_filename() {
+  string patch_filename() const {
     return id() + ".patch";
   }
 };

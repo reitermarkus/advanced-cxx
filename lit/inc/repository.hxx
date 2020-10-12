@@ -27,6 +27,24 @@ fs::path strip_path_prefix_parts(fs::path path, size_t n) {
 class Repository {
   fs::path path;
 
+  fs::path revision_file(string type) {
+    return lit_dir() / ("revision." + type);
+  }
+
+  optional<Revision> read_revision(string type) {
+    auto path = revision_file(type);
+
+    if (!fs::exists(path)) {
+      return nullopt;
+    }
+
+    ifstream file(path);
+    string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    id.pop_back();
+
+    return optional(Revision(id));
+  }
+
   public:
   Repository(fs::path path = fs::current_path()) {
     this->path = path;
@@ -121,10 +139,6 @@ class Repository {
     return file_statuses;
   }
 
-  fs::path revision_file(string type) {
-    return lit_dir() / ("revision." + type);
-  }
-
   void write_revision(string type, Revision revision) {
     ofstream file(revision_file(type));
     file << revision.id() << endl;
@@ -137,20 +151,6 @@ class Repository {
     if (!latest || revision.number() > latest->number()) {
       write_revision("latest", revision);
     }
-  }
-
-  optional<Revision> read_revision(string type) {
-    auto path = revision_file(type);
-
-    if (!fs::exists(path)) {
-      return nullopt;
-    }
-
-    ifstream file(path);
-    string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
-    id.pop_back();
-
-    return optional(Revision(id));
   }
 
   optional<Revision> current_revision() {
@@ -169,5 +169,9 @@ class Repository {
     } else {
       return Revision(0);
     }
+  }
+
+  void checkout(Revision revision) {
+    write_revision(revision);
   }
 };

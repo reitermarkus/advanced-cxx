@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include "command.hxx"
+#include "../commit.hxx"
 #include "diff.hxx"
 #include "repository.hxx"
 #include "revision.hxx"
@@ -41,33 +42,21 @@ class Commit: public Command {
     }
 
     auto repo = Repository();
-    auto commit_message = arguments[0];
-    auto revision = repo.next_revision();
-    auto commit_date = chrono::system_clock::now();
+    auto commit =
+        ::Commit(repo.next_revision(), repo.current_revision(), nullopt, chrono::system_clock::now(), arguments[0]);
 
-    cout << "Creating commit " << revision.id() << " '" << commit_message << "'" << endl;
+    cout << "Creating commit " << commit.id() << " '" << commit.message() << "'" << endl;
 
     auto tmpdir = create_temp_directory();
 
-    auto meta_file = tmpdir / revision.meta_filename();
-    auto patch_file = tmpdir / revision.patch_filename();
+    auto meta_file = tmpdir / commit.revision().meta_filename();
+    auto patch_file = tmpdir / commit.revision().patch_filename();
 
-    ofstream meta;
-    meta.open(meta_file);
+    ofstream meta(meta_file);
+    commit.serialize(meta);
+    meta.close();
 
-    ofstream patch;
-    patch.open(patch_file);
-
-    meta << "Commit: " << revision.id() << endl;
-    meta << "Parents:";
-    vector<Revision> parent_commit_ids;
-    for (auto& parent_revision: parent_commit_ids) {
-      meta << " " << parent_revision.id();
-    }
-    meta << endl;
-    meta << "Date: " << chrono::system_clock::to_time_t(commit_date) << endl;
-    meta << endl;
-    meta << commit_message << endl;
+    ofstream patch(patch_file);
 
     auto file_statuses = repo.status();
 
@@ -99,7 +88,6 @@ class Commit: public Command {
       patch << diff.output() << endl;
     }
 
-    meta.close();
     patch.close();
 
     SubProcess patch_command("patch");
@@ -107,11 +95,11 @@ class Commit: public Command {
     auto [output, status] = patch_command.output();
     assert(status == 0);
 
-    fs::rename(meta_file, repo.revisions_dir() / revision.meta_filename());
-    fs::rename(patch_file, repo.revisions_dir() / revision.patch_filename());
+    fs::rename(meta_file, repo.revisions_dir() / commit.revision().meta_filename());
+    fs::rename(patch_file, repo.revisions_dir() / commit.revision().patch_filename());
     fs::remove_all(tmpdir);
 
-    repo.write_revision(revision);
+    repo.write_revision(commit.revision());
 
     return 0;
   }
