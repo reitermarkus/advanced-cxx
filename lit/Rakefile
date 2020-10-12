@@ -7,8 +7,9 @@ task :build do
   sh 'cmake', '--build', BUILD_DIR, '-v'
 end
 
-task run: :build do
-  sh File.join(BUILD_DIR, 'lit'), 'help'
+task test: :build do
+  ENV['PATH'] = "#{File.expand_path(BUILD_DIR)}:#{ENV['PATH']}"
+  sh 'bash', '-x', 'test/integration.sh'
 end
 
 task :format do

@@ -11,6 +11,10 @@ class Repository {
     this->path = path;
   }
 
+  fs::path dir() {
+    return this->path;
+  }
+
   fs::path lit_dir() {
     return this->path / ".lit";
   }

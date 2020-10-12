@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-readonly TEST_DIR=$(mktemp --tmpdir --directory lit-test.XXXXXX)
+readonly TEST_DIR=$(mktemp -d)
 
 echo "== Using $TEST_DIR"
 pushd "$TEST_DIR"
