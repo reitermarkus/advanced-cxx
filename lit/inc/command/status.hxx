@@ -23,6 +23,11 @@ class Status: public Command {
   }
 
   int run(vector<string>& arguments) override {
+    if (!arguments.empty()) {
+      cerr << "This command does not support arguments." << endl;
+      return 1;
+    }
+
     auto repo = Repository();
 
     auto file_statuses = repo.status();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "command.hxx"
+#include "repository.hxx"
 
 using namespace std;
 
@@ -16,7 +17,14 @@ class Log: public Command {
   }
 
   int run(vector<string>& arguments) override {
-    throw;
+    if (!arguments.empty()) {
+      cerr << "This command does not support arguments." << endl;
+      return 1;
+    }
+
+    auto repo = Repository();
+
+    return 0;
   }
 };
 

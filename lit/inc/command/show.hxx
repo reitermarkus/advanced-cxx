@@ -32,7 +32,7 @@ class Show: public Command {
     if (arguments.size() == 1) {
       revision = optional(Revision(arguments[0]));
     } else {
-      revision = repo.revision();
+      revision = repo.current_revision();
     }
 
     ifstream meta(repo.revisions_dir() / revision.value().meta_filename());
