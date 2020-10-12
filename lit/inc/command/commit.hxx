@@ -10,9 +10,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "command.hxx"
 #include "../commit.hxx"
+#include "command.hxx"
 #include "diff.hxx"
+#include "patch.hxx"
 #include "repository.hxx"
 #include "revision.hxx"
 
@@ -49,14 +50,14 @@ class Commit: public Command {
 
     auto tmpdir = create_temp_directory();
 
-    auto meta_file = tmpdir / commit.revision().meta_filename();
-    auto patch_file = tmpdir / commit.revision().patch_filename();
+    auto meta_file_path = tmpdir / commit.revision().meta_filename();
+    auto patch_file_path = tmpdir / commit.revision().patch_filename();
 
-    ofstream meta(meta_file);
-    commit.serialize(meta);
-    meta.close();
+    ofstream meta_file(meta_file_path);
+    commit.serialize(meta_file);
+    meta_file.close();
 
-    ofstream patch(patch_file);
+    ofstream patch_file(patch_file_path);
 
     auto file_statuses = repo.status();
 
@@ -85,18 +86,16 @@ class Commit: public Command {
       }
 
       auto diff = Diff(path_a, path_b, label_a, label_b);
-      patch << diff.output() << endl;
+      patch_file << diff.output() << endl;
     }
 
-    patch.close();
+    patch_file.close();
 
-    SubProcess patch_command("patch");
-    patch_command.arg("-t").arg("-s").arg("-p1").arg("-i").arg(patch_file).cwd(repo.working_copy_dir());
-    auto [output, status] = patch_command.output();
-    assert(status == 0);
+    Patch patch(repo.working_copy_dir(), patch_file_path);
+    patch.apply();
 
-    fs::rename(meta_file, repo.revisions_dir() / commit.revision().meta_filename());
-    fs::rename(patch_file, repo.revisions_dir() / commit.revision().patch_filename());
+    fs::rename(meta_file_path, repo.revisions_dir() / commit.revision().meta_filename());
+    fs::rename(patch_file_path, repo.revisions_dir() / commit.revision().patch_filename());
     fs::remove_all(tmpdir);
 
     repo.write_revision(commit.revision());
