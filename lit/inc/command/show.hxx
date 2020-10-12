@@ -16,7 +16,16 @@ class Show: public Command {
   }
 
   int run(vector<string>& arguments) override {
-    throw;
+    if (arguments.size() > 1) {
+      cerr << "This command supports at most one argument." << endl;
+      return 1;
+    }
+
+    auto repo = Repository();
+
+    cout << repo.revision().value().id() << endl;
+
+    return 0;
   }
 };
 

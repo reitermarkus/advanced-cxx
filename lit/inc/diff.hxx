@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cassert>
 #include <filesystem>
 
@@ -7,27 +9,31 @@ using namespace std;
 namespace fs = std::filesystem;
 
 class Diff {
-  fs::path path_a;
-  fs::path path_b;
-
-  string output;
+  bool is_changed;
+  string patch;
 
   public:
-  Diff(fs::path a, fs::path b) {
-    this->path_a = a;
-    this->path_b = b;
-
+  Diff(fs::path a, fs::path b, string label_a, string label_b) {
     SubProcess diff("diff");
     diff.arg("-u");
-    diff.arg(string(this->path_a)).arg(string(this->path_b));
+    diff.arg(string(a)).arg(string(b));
+    diff.arg("--label").arg(label_a);
+    diff.arg("--label").arg(label_b);
 
     auto [output, status] = diff.output();
-    assert(status == 0);
 
-    this->output = output;
+    assert(status == 0 || status == 1);
+
+    this->is_changed = status == 1;
+    this->patch = output;
   }
+  Diff(fs::path a, fs::path b): Diff(a, b, string(a), string(b)) {}
 
   bool is_empty() {
-    return this->output == "";
+    return this->is_changed;
+  }
+
+  string& output() {
+    return this->patch;
   }
 };

@@ -1,9 +1,13 @@
 #pragma once
 
+#include <fstream>
+#include <numeric>
+#include <sstream>
 #include <unordered_map>
 
 #include "diff.hxx"
 #include "file_status.hxx"
+#include "revision.hxx"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -46,6 +50,7 @@ class Repository {
 
   void initialize() {
     fs::create_directory(lit_dir());
+    fs::create_directory(revisions_dir());
     fs::create_directory(working_copy_dir());
   }
 
@@ -114,5 +119,40 @@ class Repository {
     }
 
     return file_statuses;
+  }
+
+  fs::path revision_file() {
+    return lit_dir() / "revision";
+  }
+
+  void write_revision(Revision revision) {
+    ofstream file(revision_file());
+    file << revision.id() << endl;
+  }
+
+  Revision read_revision() {
+    ifstream file(path);
+    string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    return Revision(id);
+  }
+
+  optional<Revision> revision() {
+    const auto file = revision_file();
+
+    if (fs::exists(file)) {
+      return optional(read_revision());
+    } else {
+      return nullopt;
+    }
+  }
+
+  Revision next_revision() {
+    auto rev = revision();
+
+    if (rev) {
+      return Revision(rev.value().number() + 1);
+    } else {
+      return Revision(0);
+    }
   }
 };

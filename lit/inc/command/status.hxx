@@ -28,7 +28,7 @@ class Status: public Command {
     auto file_statuses = repo.status();
 
     for (auto& entry: file_statuses) {
-      auto [file, status] = entry;
+      auto [path, status] = entry;
 
       switch (status) {
         case Added: {
@@ -45,7 +45,7 @@ class Status: public Command {
         }
       }
 
-      cout << "  " << file << endl;
+      cout << "  " << path << endl;
     }
 
     return 0;
