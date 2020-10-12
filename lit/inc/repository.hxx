@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 
+#include "diff.hxx"
 #include "file_status.hxx"
 
 using namespace std;
@@ -72,7 +73,11 @@ class Repository {
 
       auto existed_previously = exists(comparison_path);
       if (existed_previously) {
-        file_statuses[string(new_path)] = Modified;
+        auto diff = Diff(path, comparison_path);
+
+        if (!diff.is_empty()) {
+          file_statuses[string(new_path)] = Modified;
+        }
       } else {
         file_statuses[string(new_path)] = Added;
       }
