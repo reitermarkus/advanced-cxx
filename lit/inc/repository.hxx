@@ -5,6 +5,7 @@
 #include <sstream>
 #include <unordered_map>
 
+#include "commit.hxx"
 #include "diff.hxx"
 #include "file_status.hxx"
 #include "revision.hxx"

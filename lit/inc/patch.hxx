@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <filesystem>
 
 #include "sub_process.hxx"
@@ -16,7 +17,7 @@ class Patch {
     command.arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_).cwd(this->dir_);
 
     if (revert) {
-      command.arg("-r");
+      command.arg("-R");
     }
 
     auto [output, status] = command.output();

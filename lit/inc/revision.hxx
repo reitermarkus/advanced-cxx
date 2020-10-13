@@ -22,7 +22,7 @@ class Revision {
   }
 
   string id() const {
-    return "r" + to_string(number());
+    return "r" + to_string(this->number_);
   }
 
   string meta_filename() const {
@@ -31,5 +31,17 @@ class Revision {
 
   string patch_filename() const {
     return id() + ".patch";
+  }
+
+  bool operator==(const Revision& other) const {
+    return this->number_ == other.number_;
+  }
+
+  bool operator>(const Revision& other) const {
+    return this->number_ > other.number_;
+  }
+
+  bool operator<(const Revision& other) const {
+    return this->number_ < other.number_;
   }
 };
