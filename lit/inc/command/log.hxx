@@ -24,27 +24,41 @@ class Log: public Command {
 
     auto repo = Repository();
 
-    auto revision = repo.latest_revision().value();
+    auto latest_revision = repo.latest_revision().value();
     auto current_revision = repo.current_revision().value();
 
-    auto commit = repo.commit(revision);
+    auto parents = 0;
 
-    while (true) {
-      cout << "o ";
+    for (auto i = latest_revision.number(); i > 0; i--) {
+      auto commit = repo.commit(Revision(i));
 
-      if (commit.revision().number() == current_revision.number()) {
+      auto parent_a = commit.parent_a();
+
+      for (auto p = 0; p < parents; p++) {
+        cout << "| ";
+      }
+
+      if (parent_a && parent_a.value().number() != i - 1) {
+        parents += 1;
+      }
+
+      cout << "o";
+
+      if (commit.parent_b()) {
+        cout << "─┐";
+        parents += 1;
+      } else {
+        cout << "  ";
+      }
+
+      cout << " ";
+      if (i == current_revision.number()) {
         cout << "← ";
       } else {
         cout << "  ";
       }
 
       cout << commit.id() << " \"" << commit.message() << "\"" << endl;
-
-      if (commit.parent_a()) {
-        commit = repo.commit(commit.parent_a().value());
-      } else {
-        break;
-      }
     }
 
     return 0;
