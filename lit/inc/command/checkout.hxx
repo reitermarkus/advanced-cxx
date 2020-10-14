@@ -67,14 +67,14 @@ class Checkout: public Command {
     for (auto& revision: patches) {
       auto patch_file_path = repo.revisions_dir() / revision.patch_filename();
 
-      Patch patch(repo.dir(), patch_file_path);
+      Patch patch(patch_file_path);
 
       if (backwards) {
         cout << "Reverting " << revision.id() << endl;
-        patch.revert();
+        patch.revert(repo.dir());
       } else {
         cout << "Applying " << revision.id() << endl;
-        patch.apply();
+        patch.apply(repo.dir());
       }
     }
 

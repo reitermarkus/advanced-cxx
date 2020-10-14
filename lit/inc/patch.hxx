@@ -9,12 +9,11 @@ using namespace std;
 namespace fs = std::filesystem;
 
 class Patch {
-  fs::path dir_;
   fs::path path_;
 
-  void patch(bool revert) {
+  void patch(fs::path dir, bool revert) const {
     SubProcess command("patch");
-    command.arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_).cwd(this->dir_);
+    command.arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_).cwd(dir);
 
     if (revert) {
       command.arg("-R");
@@ -25,13 +24,17 @@ class Patch {
   }
 
   public:
-  Patch(fs::path dir, fs::path path): dir_(dir), path_(path) {}
+  Patch(fs::path path): path_(path) {}
 
-  void apply() {
-    patch(false);
+  const fs::path& path() const {
+    return this->path_;
   }
 
-  void revert() {
-    patch(true);
+  void apply(fs::path dir) const {
+    patch(dir, false);
+  }
+
+  void revert(fs::path dir) const {
+    patch(dir, true);
   }
 };
