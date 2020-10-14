@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -20,4 +21,6 @@ class Command {
   virtual int run(vector<string>& arguments) = 0;
 
   static vector<unique_ptr<Command>> list();
+
+  static void print_usage(ostream& stream);
 };

@@ -10,6 +10,8 @@ using namespace std;
 int main(int argc, char* argv[]) {
   if (argc == 1) {
     cerr << "No subcommand given." << endl;
+    cerr << endl;
+    Command::print_usage(cerr);
     return 1;
   }
 
@@ -25,5 +27,7 @@ int main(int argc, char* argv[]) {
   }
 
   cerr << "Unknown subcommand: " << command_name << endl;
+  cerr << endl;
+  Command::print_usage(cerr);
   return 1;
 }
