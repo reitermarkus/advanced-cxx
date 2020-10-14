@@ -1,5 +1,6 @@
 #pragma once
 
+#include <numeric>
 #include <unordered_map>
 
 #include "file_status.hxx"

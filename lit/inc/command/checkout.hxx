@@ -3,11 +3,15 @@
 #include <deque>
 
 #include "command.hxx"
+#include "diff.hxx"
+#include "dir_diff.hxx"
 #include "patch.hxx"
 #include "repository.hxx"
 #include "revision.hxx"
+#include "temp_directory.hxx"
 
 using namespace std;
+namespace fs = std::filesystem;
 
 namespace command {
 
@@ -28,14 +32,19 @@ class Checkout: public Command {
 
     auto repo = Repository();
 
+    auto temp_dir = create_temp_directory();
+    auto reset_patch_path = temp_dir / "reset.patch";
+    auto reset_patch = create_patch(repo.working_copy_dir(), repo.dir(), reset_patch_path);
+    reset_patch.revert(repo.dir());
+    fs::remove_all(temp_dir);
+
     if (arguments.size() != 1) {
-      // TODO: Reset repo.
-      return 1;
+      // Only revert uncommitted changes.
+      return 0;
     }
 
     auto target_revision = Revision(arguments[0]);
     auto current_revision = repo.current_revision().value();
-
     if (current_revision == target_revision) {
       return 0;
     }
@@ -72,9 +81,11 @@ class Checkout: public Command {
       if (backwards) {
         cout << "Reverting " << revision.id() << endl;
         patch.revert(repo.dir());
+        patch.revert(repo.working_copy_dir());
       } else {
         cout << "Applying " << revision.id() << endl;
         patch.apply(repo.dir());
+        patch.apply(repo.working_copy_dir());
       }
     }
 
