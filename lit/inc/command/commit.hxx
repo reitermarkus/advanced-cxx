@@ -41,28 +41,12 @@ class Commit: public Command {
     auto repo = Repository();
     auto next_revision = repo.next_revision();
     auto current_revision = repo.current_revision();
-    auto commit = ::Commit(next_revision, current_revision, nullopt, chrono::system_clock::now(), arguments[0]);
+    auto merge_revision = repo.merge_revision();
+    auto commit = ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
 
     cout << "Creating commit " << commit.id() << " '" << commit.message() << "'" << endl;
 
-    auto tmpdir = create_temp_directory();
-
-    auto meta_file_path = tmpdir / commit.revision().meta_filename();
-    auto patch_file_path = tmpdir / commit.revision().patch_filename();
-
-    ofstream meta_file(meta_file_path);
-    commit.serialize(meta_file);
-    meta_file.close();
-
-    auto temp_repo_dir = repo.checkout_temp_directory(current_revision);
-    auto patch = create_patch(temp_repo_dir, repo.dir(), patch_file_path);
-
-    fs::rename(meta_file_path, repo.revisions_dir() / commit.revision().meta_filename());
-    fs::rename(patch_file_path, repo.revisions_dir() / commit.revision().patch_filename());
-    fs::remove_all(tmpdir);
-    fs::remove_all(temp_repo_dir);
-
-    repo.write_revision(commit.revision());
+    repo.create_commit(commit, current_revision);
 
     return 0;
   }

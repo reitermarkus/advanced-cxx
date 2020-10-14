@@ -27,26 +27,23 @@ class Log: public Command {
     auto latest_revision = repo.latest_revision().value();
     auto current_revision = repo.current_revision().value();
 
-    auto parents = 0;
+    vector<vector<long long>> children(latest_revision.number() + 1, vector<long long>());
 
     for (long long i = latest_revision.number(); i >= 0; i--) {
       auto commit = repo.commit(Revision(i));
 
       auto parent_a = commit.parent_a();
+      auto parent_b = commit.parent_b();
 
-      for (auto p = 0; p < parents; p++) {
-        cout << "| ";
-      }
-
-      if (parent_a && parent_a.value().number() != i - 1) {
-        parents += 1;
+      if (parent_a) {
+        children[parent_a.value().number()].push_back(i);
       }
 
       cout << "o";
 
-      if (commit.parent_b()) {
+      if (parent_b) {
         cout << "─┐";
-        parents += 1;
+        children[parent_b.value().number()].push_back(i);
       } else {
         cout << "  ";
       }

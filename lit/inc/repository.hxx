@@ -37,6 +37,19 @@ class Repository {
     return optional(Revision(id));
   }
 
+  void remove_merge_revision() {
+    auto path = revision_file("merge");
+
+    if (fs::exists(path)) {
+      fs::remove(path);
+    }
+  }
+
+  void write_revision(string type, Revision revision) {
+    ofstream file(revision_file(type));
+    file << revision.id() << endl;
+  }
+
   public:
   Repository(fs::path path = fs::current_path()) {
     this->path = path;
@@ -73,18 +86,23 @@ class Repository {
     return file_statuses;
   }
 
-  void write_revision(string type, Revision revision) {
-    ofstream file(revision_file(type));
-    file << revision.id() << endl;
-  }
-
-  void write_revision(Revision revision) {
+  void write_current_revision(Revision revision) {
     write_revision("current", revision);
 
     auto latest = latest_revision();
     if (!latest || revision.number() > latest->number()) {
       write_revision("latest", revision);
     }
+
+    remove_merge_revision();
+  }
+
+  void write_merge_revision(Revision revision) {
+    write_revision("merge", revision);
+  }
+
+  optional<Revision> merge_revision() {
+    return read_revision("merge");
   }
 
   optional<Revision> current_revision() {
@@ -108,6 +126,27 @@ class Repository {
   Commit commit(Revision revision) {
     ifstream meta(revisions_dir() / revision.meta_filename());
     return Commit::deserialize(meta);
+  }
+
+  void create_commit(Commit commit, optional<Revision> current_revision) {
+    auto tmpdir = create_temp_directory();
+
+    auto meta_file_path = tmpdir / commit.revision().meta_filename();
+    auto patch_file_path = tmpdir / commit.revision().patch_filename();
+
+    ofstream meta_file(meta_file_path);
+    commit.serialize(meta_file);
+    meta_file.close();
+
+    auto temp_repo_dir = checkout_temp_directory(current_revision);
+    auto patch = create_patch(temp_repo_dir, dir(), patch_file_path);
+
+    fs::rename(meta_file_path, revisions_dir() / commit.revision().meta_filename());
+    fs::rename(patch_file_path, revisions_dir() / commit.revision().patch_filename());
+    fs::remove_all(tmpdir);
+    fs::remove_all(temp_repo_dir);
+
+    write_current_revision(commit.revision());
   }
 
   fs::path checkout_temp_directory(optional<Revision> revision) {
@@ -148,14 +187,12 @@ class Repository {
       auto path = entry.path();
       auto relative_path = strip_path_prefix_parts(path, temp_dir_parts);
 
-      cout << "Renaming " << path << " to " << (repo_dir / relative_path) << endl;
-
       fs::rename(path, repo_dir / relative_path);
     }
 
     fs::remove_all(temp_repo_dir);
 
-    write_revision(revision);
+    write_current_revision(revision);
   }
 
   optional<Revision> merge_base_opt(optional<Revision> revision_a, optional<Revision> revision_b) {
@@ -167,33 +204,30 @@ class Repository {
   }
 
   optional<Revision> merge_base(Revision revision_a, Revision revision_b) {
-    while (true) {
-      if (revision_a == revision_b) {
-        return optional(revision_a);
-      } else if (revision_a > revision_b) {
-        auto parent_a = this->commit(revision_a).parent_a();
-        auto parent_b = this->commit(revision_a).parent_b();
+    auto next_parent = [&](Revision revision) {
+      auto c = commit(revision);
 
-        auto parent_base = merge_base_opt(parent_a, parent_b);
+      if (c.parent_b()) {
+        return c.parent_b();
+      }
 
-        if (parent_base) {
-          revision_a = parent_base.value();
-        } else {
-          break;
-        }
-      } else if (revision_b > revision_a) {
-        auto parent_a = this->commit(revision_b).parent_a();
-        auto parent_b = this->commit(revision_b).parent_b();
+      return c.parent_a();
+    };
 
-        auto parent_base = merge_base_opt(parent_a, parent_b);
+    auto next_a = next_parent(revision_a);
+    auto next_b = next_parent(revision_b);
 
-        if (parent_base) {
-          revision_b = parent_base.value();
-        } else {
-          break;
-        }
-      } else {
-        break;
+    while (next_a && next_b) {
+      if (*next_a > *next_b) {
+        next_a = next_parent(*next_a);
+      }
+
+      if (*next_b > *next_a) {
+        next_b = next_parent(*next_b);
+      }
+
+      if (*next_a == *next_b) {
+        return *next_a;
       }
     }
 
