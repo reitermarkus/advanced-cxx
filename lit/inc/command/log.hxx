@@ -29,7 +29,7 @@ class Log: public Command {
 
     auto parents = 0;
 
-    for (auto i = latest_revision.number(); i > 0; i--) {
+    for (long long i = latest_revision.number(); i >= 0; i--) {
       auto commit = repo.commit(Revision(i));
 
       auto parent_a = commit.parent_a();

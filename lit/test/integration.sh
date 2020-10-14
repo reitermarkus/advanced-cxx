@@ -51,6 +51,8 @@ lit show r0
 echo "== Switching to r0"
 lit checkout r0
 
+tree -a
+
 # Checking the file content.
 diff -s file1 - <<-EOF
 	This is the first line of the first file. 🚀
