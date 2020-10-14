@@ -111,7 +111,7 @@ echo "== Merging (no conflict)"
 lit merge r3
 
 # file2 should now be present.
-diff -s subfolder/file2 <<-EOF
+diff -s subfolder/file2 - <<-EOF
 	This is the first line of the second file.
 	And another line in the second file.
 EOF
@@ -154,7 +154,7 @@ diff -s file1 - <<-EOF
 	Fifth line on top of r4.
 EOF
 
-#   other breanch
+#   other branch
 diff -s file1.r6 - <<-EOF
 	This is the first line of the first file. 🚀
 	This is the second line of the first file.
