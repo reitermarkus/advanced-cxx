@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "file_status.hxx"
+#include "fs.hxx"
 
 size_t count_path_parts(fs::path path) {
   return accumulate(path.begin(), path.end(), 0, [](size_t acc, fs::path _) { return acc + 1; });
@@ -47,12 +48,9 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
     }
   };
 
-  for (auto& entry: fs::directory_iterator(dir_b)) {
+  for (auto& entry: fs::repository_iterator(dir_b)) {
     auto path = entry.path();
 
-    if (path == dir_b / ".lit") {
-      continue;
-    }
     if (entry.is_directory()) {
       for (auto& recursive_entry: fs::recursive_directory_iterator(path)) {
         status_b(recursive_entry);
@@ -78,12 +76,9 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
     }
   };
 
-  for (auto& entry: fs::directory_iterator(dir_a)) {
+  for (auto& entry: fs::repository_iterator(dir_a)) {
     auto path = entry.path();
 
-    if (path == dir_a / ".lit") {
-      continue;
-    }
     if (entry.is_directory()) {
       for (auto& recursive_entry: fs::recursive_directory_iterator(path)) {
         status_a(recursive_entry);

@@ -168,17 +168,14 @@ class Repository {
     auto repo_dir = dir();
     auto temp_repo_dir = checkout_temp_directory(optional(revision));
 
-    for (auto& entry: fs::directory_iterator(repo_dir)) {
-      auto path = entry.path();
-
-      if (path != repo_dir / ".lit") {
-        fs::remove_all(path);
-      }
+    auto repo_lit_dir = lit_dir();
+    for (auto& entry: fs::repository_iterator(repo_dir)) {
+      fs::remove_all(entry.path());
     }
 
     auto temp_dir_parts = count_path_parts(*temp_repo_dir);
 
-    for (auto& entry: fs::directory_iterator(*temp_repo_dir)) {
+    for (auto& entry: fs::repository_iterator(*temp_repo_dir)) {
       auto path = entry.path();
       auto relative_path = strip_path_prefix_parts(path, temp_dir_parts);
 
