@@ -3,10 +3,10 @@
 #include <cassert>
 #include <filesystem>
 
+#include "fs.hxx"
 #include "sub_process.hxx"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 class Diff {
   bool is_changed_;

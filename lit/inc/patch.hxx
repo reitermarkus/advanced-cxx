@@ -4,10 +4,10 @@
 #include <filesystem>
 #include <fstream>
 
+#include "fs.hxx"
 #include "sub_process.hxx"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 class Patch {
   fs::path path_;

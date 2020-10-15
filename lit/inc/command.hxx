@@ -12,12 +12,8 @@ class Command {
   Command() {}
   virtual ~Command() {}
 
-  virtual string name() const {
-    throw;
-  };
-  virtual string description() const {
-    throw;
-  };
+  virtual string name() const = 0;
+  virtual string description() const = 0;
   virtual int run(vector<string>& arguments) = 0;
 
   static vector<unique_ptr<Command>> list();

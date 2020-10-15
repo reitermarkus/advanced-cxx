@@ -10,11 +10,10 @@
 #include "diff.hxx"
 #include "dir_diff.hxx"
 #include "file_status.hxx"
+#include "fs.hxx"
 #include "revision.hxx"
-#include "temp_directory.hxx"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 class Repository {
   fs::path path;
@@ -129,7 +128,7 @@ class Repository {
   }
 
   void create_commit(Commit commit, optional<Revision> current_revision) {
-    auto tmpdir = create_temp_directory();
+    auto tmpdir = fs::create_temp_directory();
 
     auto meta_file_path = tmpdir / commit.revision().meta_filename();
     auto patch_file_path = tmpdir / commit.revision().patch_filename();
@@ -150,7 +149,7 @@ class Repository {
   }
 
   fs::path checkout_temp_directory(optional<Revision> revision) {
-    auto temp_repo_dir = create_temp_directory();
+    auto temp_repo_dir = fs::create_temp_directory();
 
     deque<Revision> revisions;
 

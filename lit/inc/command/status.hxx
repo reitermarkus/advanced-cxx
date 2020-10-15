@@ -6,10 +6,10 @@
 #include <numeric>
 
 #include "command.hxx"
+#include "fs.hxx"
 #include "repository.hxx"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 namespace command {
 

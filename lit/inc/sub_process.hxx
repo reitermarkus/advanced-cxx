@@ -5,8 +5,9 @@
 #include <filesystem>
 #include <stdexcept>
 
+#include "fs.hxx"
+
 using namespace std;
-namespace fs = std::filesystem;
 
 class SubProcess {
   string command;

@@ -5,13 +5,12 @@
 #include "command.hxx"
 #include "diff.hxx"
 #include "dir_diff.hxx"
+#include "fs.hxx"
 #include "patch.hxx"
 #include "repository.hxx"
 #include "revision.hxx"
-#include "temp_directory.hxx"
 
 using namespace std;
-namespace fs = std::filesystem;
 
 namespace command {
 

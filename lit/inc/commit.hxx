@@ -101,10 +101,3 @@ class Commit {
     return Commit(revision, parent_a, parent_b, date, message);
   }
 };
-
-ostream& operator<<(ostream& os, const Commit& commit)
-
-{
-  commit.pretty_print(os);
-  return os;
-}
