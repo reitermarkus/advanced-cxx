@@ -71,11 +71,11 @@ class Merge: public Command {
 
     unordered_set<string> conflicts;
 
-    auto move_changed_files = [&](fs::path tmp_repo_dir, string path, FileStatus status) {
+    auto move_changed_files = [&](fs::path temp_repo_dir, string path, FileStatus status) {
       switch (status) {
         case Added:
         case Modified: {
-          move_and_create_directory(tmp_repo_dir / path, repo_dir / path);
+          move_and_create_directory(temp_repo_dir / path, repo_dir / path);
           break;
         }
         case Deleted: {

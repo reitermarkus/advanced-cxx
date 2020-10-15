@@ -128,10 +128,10 @@ class Repository {
   }
 
   void create_commit(Commit commit, optional<Revision> current_revision) {
-    auto tmpdir = fs::create_temp_directory();
+    auto temp_dir = fs::create_temp_directory();
 
-    auto meta_file_path = tmpdir / commit.revision().meta_filename();
-    auto patch_file_path = tmpdir / commit.revision().patch_filename();
+    auto meta_file_path = temp_dir / commit.revision().meta_filename();
+    auto patch_file_path = temp_dir / commit.revision().patch_filename();
 
     ofstream meta_file(meta_file_path);
     commit.serialize(meta_file);
@@ -142,7 +142,7 @@ class Repository {
 
     fs::rename(meta_file_path, revisions_dir() / commit.revision().meta_filename());
     fs::rename(patch_file_path, revisions_dir() / commit.revision().patch_filename());
-    fs::remove_all(tmpdir);
+    fs::remove_all(temp_dir);
     fs::remove_all(temp_repo_dir);
 
     write_current_revision(commit.revision());
