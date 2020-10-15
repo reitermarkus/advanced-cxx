@@ -1,3 +1,5 @@
+#include <numeric>
+
 #include "command.hxx"
 #include "command/checkout.hxx"
 #include "command/commit.hxx"

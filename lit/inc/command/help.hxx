@@ -1,11 +1,5 @@
 #pragma once
 
-#include <functional>
-#include <iostream>
-#include <numeric>
-#include <string>
-#include <vector>
-
 #include "command.hxx"
 
 using namespace std;

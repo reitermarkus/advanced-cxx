@@ -9,7 +9,7 @@ end
 
 task test: :build do
   ENV['PATH'] = "#{File.expand_path(BUILD_DIR)}:#{ENV['PATH']}"
-  sh 'bash', '-x', 'test/integration.sh'
+  sh 'bash', 'test/integration.sh'
 end
 
 task :format do
