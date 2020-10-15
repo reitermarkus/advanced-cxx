@@ -30,10 +30,10 @@ class Log: public Command {
     auto latest_revision = repo.latest_revision().value();
     auto current_revision = repo.current_revision().value();
 
-    size_t latest_revision_n = latest_revision.number();
-    size_t revisions = latest_revision_n + 1;
+    auto latest_revision_n = latest_revision.number();
+    auto revisions = latest_revision_n + 1;
     vector<vector<long long>> children(revisions, vector<long long>());
-    vector<size_t> unfinished(revisions, 0);
+    vector<decltype(latest_revision_n)> unfinished(revisions, 0);
 
     size_t indentation = 0;
     size_t max_indentation = 0;
