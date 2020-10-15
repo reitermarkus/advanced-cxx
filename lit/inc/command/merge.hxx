@@ -58,8 +58,8 @@ class Merge: public Command {
     auto temp_repo_dir_merge = repo.checkout_temp_directory(optional(merge_revision));
 
     auto repo_dir = repo.dir();
-    auto file_statuses_current = dir_diff(temp_repo_dir_base, repo_dir);
-    auto file_statuses_merge = dir_diff(temp_repo_dir_base, temp_repo_dir_merge);
+    auto file_statuses_current = dir_diff(*temp_repo_dir_base, repo_dir);
+    auto file_statuses_merge = dir_diff(*temp_repo_dir_base, *temp_repo_dir_merge);
 
     auto move_and_create_directory = [](fs::path from, fs::path to) {
       if (to.has_parent_path()) {
@@ -94,7 +94,7 @@ class Merge: public Command {
         continue;
       }
 
-      move_changed_files(temp_repo_dir_merge, path, status);
+      move_changed_files(*temp_repo_dir_merge, path, status);
     }
 
     for (auto& entry: file_statuses_current) {
@@ -110,12 +110,9 @@ class Merge: public Command {
         }
       };
 
-      move_if_exists(temp_repo_dir_merge / path, repo_dir / (path + "." + merge_revision.id()));
-      move_if_exists(temp_repo_dir_base / path, repo_dir / (path + "." + base_revision->id()));
+      move_if_exists(*temp_repo_dir_merge / path, repo_dir / (path + "." + merge_revision.id()));
+      move_if_exists(*temp_repo_dir_base / path, repo_dir / (path + "." + base_revision->id()));
     }
-
-    fs::remove_all(temp_repo_dir_base);
-    fs::remove_all(temp_repo_dir_merge);
 
     if (conflicts.empty()) {
       auto next_revision = repo.next_revision();

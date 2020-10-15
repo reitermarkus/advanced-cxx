@@ -78,9 +78,7 @@ class Repository {
   unordered_map<string, FileStatus> status() {
     auto temp_repo_dir = checkout_temp_directory(current_revision());
 
-    auto file_statuses = dir_diff(temp_repo_dir, dir());
-
-    fs::remove_all(temp_repo_dir);
+    auto file_statuses = dir_diff(*temp_repo_dir, dir());
 
     return file_statuses;
   }
@@ -130,25 +128,23 @@ class Repository {
   void create_commit(Commit commit, optional<Revision> current_revision) {
     auto temp_dir = fs::create_temp_directory();
 
-    auto meta_file_path = temp_dir / commit.revision().meta_filename();
-    auto patch_file_path = temp_dir / commit.revision().patch_filename();
+    auto meta_file_path = *temp_dir / commit.revision().meta_filename();
+    auto patch_file_path = *temp_dir / commit.revision().patch_filename();
 
     ofstream meta_file(meta_file_path);
     commit.serialize(meta_file);
     meta_file.close();
 
     auto temp_repo_dir = checkout_temp_directory(current_revision);
-    auto patch = create_patch(temp_repo_dir, dir(), patch_file_path);
+    auto patch = create_patch(*temp_repo_dir, dir(), patch_file_path);
 
     fs::rename(meta_file_path, revisions_dir() / commit.revision().meta_filename());
     fs::rename(patch_file_path, revisions_dir() / commit.revision().patch_filename());
-    fs::remove_all(temp_dir);
-    fs::remove_all(temp_repo_dir);
 
     write_current_revision(commit.revision());
   }
 
-  fs::path checkout_temp_directory(optional<Revision> revision) {
+  fs::temp_path checkout_temp_directory(optional<Revision> revision) {
     auto temp_repo_dir = fs::create_temp_directory();
 
     deque<Revision> revisions;
@@ -162,7 +158,7 @@ class Repository {
 
     for (auto& r: revisions) {
       Patch patch(revisions_dir() / r.patch_filename());
-      patch.apply(temp_repo_dir);
+      patch.apply(*temp_repo_dir);
     }
 
     return temp_repo_dir;
@@ -180,16 +176,14 @@ class Repository {
       }
     }
 
-    auto temp_dir_parts = count_path_parts(temp_repo_dir);
+    auto temp_dir_parts = count_path_parts(*temp_repo_dir);
 
-    for (auto& entry: fs::directory_iterator(temp_repo_dir)) {
+    for (auto& entry: fs::directory_iterator(*temp_repo_dir)) {
       auto path = entry.path();
       auto relative_path = strip_path_prefix_parts(path, temp_dir_parts);
 
       fs::rename(path, repo_dir / relative_path);
     }
-
-    fs::remove_all(temp_repo_dir);
 
     write_current_revision(revision);
   }
