@@ -36,6 +36,6 @@ jobs:
 
       - name: Test
         run: |
-          export PATH="${PWD}/lit/build:${PATH}"
+          export PATH="${PWD}/build:${PATH}"
 
           bash -x lit/test/integration.sh
