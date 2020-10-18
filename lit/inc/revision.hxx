@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <iostream>
 #include <string>
 
 using namespace std;
@@ -10,7 +11,11 @@ class Revision {
 
   public:
   Revision(string id) {
-    assert(id[0] == 'r');
+    if (id[0] != 'r') {
+      cerr << "Invalid revision ID: '" << id << "'" << endl;
+      abort();
+    }
+
     id.erase(0, 1);
     this->number_ = stoul(id);
   }
