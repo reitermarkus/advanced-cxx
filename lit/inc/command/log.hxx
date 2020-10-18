@@ -85,7 +85,7 @@ class Log: public Command {
       }
 
       cout << " ";
-      if (i == current_revision.number()) {
+      if ((size_t)i == current_revision.number()) {
         cout << "← ";
       } else {
         cout << "  ";
