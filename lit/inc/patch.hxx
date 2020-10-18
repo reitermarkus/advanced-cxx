@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <fstream>
 
+#include "dir_diff.hxx"
+#include "file_status.hxx"
 #include "fs.hxx"
 #include "sub_process.hxx"
 

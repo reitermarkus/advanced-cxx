@@ -48,16 +48,8 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
     }
   };
 
-  for (auto& entry: fs::repository_iterator(dir_b)) {
-    auto path = entry.path();
-
-    if (entry.is_directory()) {
-      for (auto& recursive_entry: fs::recursive_directory_iterator(path)) {
-        status_b(recursive_entry);
-      }
-    } else {
-      status_b(entry);
-    }
+  for (auto& entry: fs::recursive_repository_iterator(dir_b)) {
+    status_b(entry);
   }
 
   auto status_a = [&](fs::directory_entry entry) {
@@ -76,16 +68,8 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
     }
   };
 
-  for (auto& entry: fs::repository_iterator(dir_a)) {
-    auto path = entry.path();
-
-    if (entry.is_directory()) {
-      for (auto& recursive_entry: fs::recursive_directory_iterator(path)) {
-        status_a(recursive_entry);
-      }
-    } else {
-      status_a(entry);
-    }
+  for (auto& entry: fs::recursive_repository_iterator(dir_a)) {
+    status_a(entry);
   }
 
   return file_statuses;

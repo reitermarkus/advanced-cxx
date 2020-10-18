@@ -11,6 +11,7 @@
 #include "dir_diff.hxx"
 #include "file_status.hxx"
 #include "fs.hxx"
+#include "patch.hxx"
 #include "revision.hxx"
 
 using namespace std;
