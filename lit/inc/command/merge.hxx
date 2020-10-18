@@ -15,6 +15,7 @@ namespace command {
 
 class Merge: public Command {
   public:
+  Merge(): Command(1, 1) {}
   string name() const override {
     return "merge";
   }
@@ -22,21 +23,14 @@ class Merge: public Command {
     return "Initiate a merge with the currently checked out commit and the specified commit.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (arguments.size() != 1) {
-      cerr << "This command requires exactly one argument." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-
-    auto status = repo.status();
+  int run_inner(vector<string>& arguments) override {
+    auto status = repo().status();
     if (!status.empty()) {
       cerr << "Cannot merge with uncommitted files." << endl;
       return 1;
     }
 
-    auto current_revision = repo.current_revision().value();
+    auto current_revision = repo().current_revision().value();
     auto merge_revision = Revision(arguments[0]);
 
     if (current_revision == merge_revision) {
@@ -46,7 +40,7 @@ class Merge: public Command {
 
     cout << "Merging " << merge_revision.id() << " into " << current_revision.id() << endl;
 
-    auto base_revision = repo.merge_base(current_revision, merge_revision);
+    auto base_revision = repo().merge_base(current_revision, merge_revision);
     if (!base_revision) {
       cerr << "No merge base found for " << current_revision.id() << " and " << merge_revision.id() << endl;
       return 1;
@@ -54,10 +48,10 @@ class Merge: public Command {
 
     cout << "Merge base: " << base_revision.value().id() << endl;
 
-    auto temp_repo_dir_base = repo.checkout_temp_directory(base_revision);
-    auto temp_repo_dir_merge = repo.checkout_temp_directory(optional(merge_revision));
+    auto temp_repo_dir_base = repo().checkout_temp_directory(base_revision);
+    auto temp_repo_dir_merge = repo().checkout_temp_directory(optional(merge_revision));
 
-    auto repo_dir = repo.dir();
+    auto repo_dir = repo().dir();
     auto file_statuses_current = dir_diff(*temp_repo_dir_base, repo_dir);
     auto file_statuses_merge = dir_diff(*temp_repo_dir_base, *temp_repo_dir_merge);
 
@@ -115,12 +109,12 @@ class Merge: public Command {
     }
 
     if (conflicts.empty()) {
-      auto next_revision = repo.next_revision();
+      auto next_revision = repo().next_revision();
       auto commit_message = "Merge " + merge_revision.id() + " into " + current_revision.id();
       auto commit =
           ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), commit_message);
 
-      repo.create_commit(commit, current_revision);
+      repo().create_commit(commit, current_revision);
     } else {
       cerr << "Merge conflict(s) detected:" << endl;
 
@@ -128,7 +122,7 @@ class Merge: public Command {
         cerr << "  - " << path << endl;
       }
 
-      repo.write_merge_revision(merge_revision);
+      repo().write_merge_revision(merge_revision);
 
       return 1;
     }

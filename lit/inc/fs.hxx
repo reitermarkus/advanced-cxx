@@ -12,11 +12,7 @@ using namespace std::filesystem;
 
 using temp_path = unique_ptr<fs::path, void (*)(fs::path*)>;
 
-temp_path create_temp_directory() {
-  auto pattern = temp_directory_path() / "lit.XXXXXX";
-
-  return temp_path(new path(mkdtemp((char*)pattern.c_str())), [](fs::path* path) { fs::remove_all(*path); });
-}
+temp_path create_temp_directory();
 
 inline bool is_lit(const path& p) {
   return p.filename() == ".lit";
@@ -119,12 +115,7 @@ class recursive_repository_iterator: public repository_iterator {
   }
 };
 
-recursive_repository_iterator begin(recursive_repository_iterator it) noexcept {
-  return it;
-}
-
-recursive_repository_iterator end(const recursive_repository_iterator&) noexcept {
-  return recursive_repository_iterator();
-}
+recursive_repository_iterator begin(recursive_repository_iterator it) noexcept;
+recursive_repository_iterator end(const recursive_repository_iterator&) noexcept;
 
 }

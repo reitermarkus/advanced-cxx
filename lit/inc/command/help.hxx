@@ -15,12 +15,7 @@ class Help: public Command {
     return "Display help information about Lit.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (!arguments.empty()) {
-      cerr << "This command does not support arguments." << endl;
-      return 1;
-    }
-
+  int run_inner(vector<string>& arguments) override {
     Command::print_usage(cout);
 
     return 0;

@@ -24,6 +24,7 @@ namespace command {
 
 class Commit: public Command {
   public:
+  Commit(): Command(1, 1) {}
   string name() const override {
     return "commit";
   }
@@ -31,21 +32,15 @@ class Commit: public Command {
     return "Record changes to the repository.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (arguments.size() != 1) {
-      cerr << "This command requires exactly one argument." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-    auto next_revision = repo.next_revision();
-    auto current_revision = repo.current_revision();
-    auto merge_revision = repo.merge_revision();
+  int run_inner(vector<string>& arguments) override {
+    auto next_revision = repo().next_revision();
+    auto current_revision = repo().current_revision();
+    auto merge_revision = repo().merge_revision();
     auto commit = ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
 
     cout << "Creating commit " << commit.id() << " '" << commit.message() << "'" << endl;
 
-    repo.create_commit(commit, current_revision);
+    repo().create_commit(commit, current_revision);
 
     return 0;
   }

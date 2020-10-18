@@ -19,16 +19,9 @@ class Log: public Command {
     return "Display a graph of all commits.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (!arguments.empty()) {
-      cerr << "This command does not support arguments." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-
-    auto latest_revision = repo.latest_revision().value();
-    auto current_revision = repo.current_revision().value();
+  int run_inner(vector<string>& arguments) override {
+    auto latest_revision = repo().latest_revision().value();
+    auto current_revision = repo().current_revision().value();
 
     auto latest_revision_n = latest_revision.number();
     auto revisions = latest_revision_n + 1;
@@ -41,7 +34,7 @@ class Log: public Command {
     bool previous_was_merge_commit = false;
 
     for (ssize_t i = latest_revision_n; i >= 0; i--) {
-      auto commit = repo.commit(Revision(i));
+      auto commit = repo().commit(Revision(i));
 
       auto parent_a = commit.parent_a();
       auto parent_b = commit.parent_b();

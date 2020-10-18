@@ -22,15 +22,8 @@ class Status: public Command {
     return "Show the working tree status.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (!arguments.empty()) {
-      cerr << "This command does not support arguments." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-
-    auto file_statuses = repo.status();
+  int run_inner(vector<string>& arguments) override {
+    auto file_statuses = repo().status();
 
     for (auto& entry: file_statuses) {
       auto [path, status] = entry;

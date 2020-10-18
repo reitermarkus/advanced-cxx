@@ -16,6 +16,7 @@ namespace command {
 
 class Checkout: public Command {
   public:
+  Checkout(): Command(0, 1) {}
   string name() const override {
     return "checkout";
   }
@@ -23,16 +24,9 @@ class Checkout: public Command {
     return "Reset the repository to the given commit's state.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (arguments.size() > 1) {
-      cerr << "This command supports at most one argument." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-
-    auto target_revision = arguments.size() == 1 ? Revision(arguments[0]) : repo.current_revision().value();
-    repo.checkout(target_revision);
+  int run_inner(vector<string>& arguments) override {
+    auto target_revision = arguments.empty() ? *repo().current_revision() : Revision(arguments[0]);
+    repo().checkout(target_revision);
 
     return 0;
   }

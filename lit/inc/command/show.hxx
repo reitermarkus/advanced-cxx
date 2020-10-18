@@ -12,6 +12,7 @@ namespace command {
 
 class Show: public Command {
   public:
+  Show(): Command(0, 1) {}
   string name() const override {
     return "show";
   }
@@ -19,28 +20,21 @@ class Show: public Command {
     return "Inspect the given commit.";
   }
 
-  int run(vector<string>& arguments) override {
-    if (arguments.size() > 1) {
-      cerr << "This command supports at most one argument." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-
+  int run_inner(vector<string>& arguments) override {
     optional<Revision> revision;
 
     if (arguments.size() == 1) {
       revision = optional(Revision(arguments[0]));
     } else {
-      revision = repo.current_revision();
+      revision = repo().current_revision();
     }
 
-    auto commit = repo.commit(revision.value());
+    auto commit = repo().commit(revision.value());
     commit.pretty_print(cout);
 
     cout << endl;
 
-    ifstream patch(repo.revisions_dir() / revision.value().patch_filename());
+    ifstream patch(repo().revisions_dir() / revision.value().patch_filename());
     cout << patch.rdbuf();
 
     return 0;

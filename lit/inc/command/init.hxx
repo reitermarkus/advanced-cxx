@@ -20,18 +20,12 @@ class Init: public Command {
     return "Create an empty Lit repository or reinitialize an existing one";
   }
 
-  int run(vector<string>& arguments) override {
-    if (!arguments.empty()) {
-      cerr << "This command does not support arguments." << endl;
-      return 1;
-    }
-
-    auto repo = Repository();
-    auto lit_dir = string(repo.lit_dir());
-    if (repo.is_initialized()) {
+  int run_inner(vector<string>& arguments) override {
+    auto lit_dir = string(repo().lit_dir());
+    if (repo().is_initialized()) {
       cout << "Reinitialized existing Lit repository in " << lit_dir << endl;
     } else {
-      repo.initialize();
+      repo().initialize();
       cout << "Initialized empty Lit repository in " << lit_dir << endl;
     }
 
