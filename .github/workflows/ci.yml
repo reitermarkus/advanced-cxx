@@ -33,3 +33,9 @@ jobs:
         env:
           CC: gcc-10
           CXX: g++-10
+
+      - name: Test
+        run: |
+          export PATH="${PWD}/lit/build:${PATH}"
+
+          bash -x lit/test/integration.sh
