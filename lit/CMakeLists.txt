@@ -15,5 +15,6 @@ target_sources(lit
     src/fs.cxx
     src/patch.cxx
     src/dir_diff.cxx
+    src/revision.cxx
 )
 target_include_directories(lit PUBLIC "${CMAKE_CURRENT_LIST_DIR}/inc")

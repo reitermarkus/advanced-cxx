@@ -39,7 +39,18 @@ class repository_iterator: public directory_iterator {
 
     return *this;
   }
+
+  bool operator==(const repository_iterator& other) const {
+    return (const directory_iterator&)(*this) == (const directory_iterator&)(other);
+  }
+
+  bool operator!=(const repository_iterator& other) const {
+    return !(*this == other);
+  }
 };
+
+repository_iterator begin(repository_iterator it) noexcept;
+repository_iterator end(const repository_iterator&) noexcept;
 
 class recursive_repository_iterator: public repository_iterator {
   bool ignore_directories = true;
@@ -47,7 +58,7 @@ class recursive_repository_iterator: public repository_iterator {
 
   void skip_directories() {
     if (ignore_directories) {
-      while (*this != fs::end(*this)) {
+      while (*this != end(*this)) {
         auto direntry = (**this);
 
         if (!direntry.is_directory()) {
@@ -73,13 +84,13 @@ class recursive_repository_iterator: public repository_iterator {
     if (rec_it) {
       ++(*rec_it);
 
-      if (*rec_it == fs::end(*rec_it)) {
+      if (*rec_it == end(*rec_it)) {
         rec_it.reset();
       }
     } else {
       if (entry.is_directory()) {
         auto temp_rec_it = shared_ptr<recursive_repository_iterator>(new recursive_repository_iterator(entry.path()));
-        if (*temp_rec_it != fs::end(*temp_rec_it)) {
+        if (*temp_rec_it != end(*temp_rec_it)) {
           rec_it = temp_rec_it;
         }
       }

@@ -51,3 +51,5 @@ class Revision {
     return this->number_ < other.number_;
   }
 };
+
+ostream& operator<<(ostream& os, Revision revision);
