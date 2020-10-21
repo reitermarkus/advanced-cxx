@@ -16,7 +16,7 @@ class Patch {
 
   void patch(fs::path dir, bool revert) const {
     SubProcess command("patch");
-    command.arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_).cwd(dir);
+    command.arg("-d").arg(dir).arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_);
 
     if (revert) {
       command.arg("-R");
