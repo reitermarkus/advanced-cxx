@@ -1,4 +1,5 @@
 #include "dir_diff.hxx"
+
 #include "fs.hxx"
 
 unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
@@ -9,11 +10,6 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
 
   auto status_b = [&](fs::directory_entry entry) {
     auto path = entry.path();
-
-    if (is_directory(path)) {
-      // Only track changes to files.
-      return;
-    }
 
     auto new_path = fs::strip_path_prefix_parts(path, dir_b_parts);
 
@@ -38,16 +34,15 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
   auto status_a = [&](fs::directory_entry entry) {
     auto path = entry.path();
 
-    auto new_path = strip_path_prefix_parts(path, dir_a_parts);
-    auto new_path_string = string(new_path);
+    auto new_path = fs::strip_path_prefix_parts(path, dir_a_parts);
 
-    if (file_statuses.contains(new_path_string)) {
+    if (file_statuses.contains(new_path)) {
       return;
     }
 
     auto was_deleted = !exists(dir_b / new_path);
     if (was_deleted) {
-      file_statuses[new_path_string] = Deleted;
+      file_statuses[string(new_path)] = Deleted;
     }
   };
 
