@@ -15,12 +15,17 @@ namespace command {
 
 class Merge: public Command {
   public:
-  Merge(): Command(1, 1) {}
   string name() const override {
     return "merge";
   }
   string description() const override {
     return "Initiate a merge with the currently checked out commit and the specified commit.";
+  }
+  size_t min_arguments() const override {
+    return 1;
+  }
+  size_t max_arguments() const override {
+    return 1;
   }
 
   int run_inner(vector<string>& arguments) override {

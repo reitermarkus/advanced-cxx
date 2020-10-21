@@ -24,12 +24,17 @@ namespace command {
 
 class Commit: public Command {
   public:
-  Commit(): Command(1, 1) {}
   string name() const override {
     return "commit";
   }
   string description() const override {
     return "Record changes to the repository.";
+  }
+  size_t min_arguments() const override {
+    return 1;
+  }
+  size_t max_arguments() const override {
+    return 1;
   }
 
   int run_inner(vector<string>& arguments) override {

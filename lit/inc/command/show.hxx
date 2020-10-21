@@ -12,12 +12,14 @@ namespace command {
 
 class Show: public Command {
   public:
-  Show(): Command(0, 1) {}
   string name() const override {
     return "show";
   }
   string description() const override {
     return "Inspect the given commit.";
+  }
+  size_t max_arguments() const override {
+    return 1;
   }
 
   int run_inner(vector<string>& arguments) override {
