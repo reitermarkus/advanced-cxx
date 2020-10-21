@@ -137,7 +137,7 @@ class Repository {
     meta_file.close();
 
     auto temp_repo_dir = checkout_temp_directory(current_revision);
-    auto patch = create_patch(*temp_repo_dir, dir(), patch_file_path);
+    auto patch = Patch::create(*temp_repo_dir, dir(), patch_file_path);
 
     fs::rename(meta_file_path, revisions_dir() / commit.revision().meta_filename());
     fs::rename(patch_file_path, revisions_dir() / commit.revision().patch_filename());
@@ -174,11 +174,11 @@ class Repository {
       fs::remove_all(entry.path());
     }
 
-    auto temp_dir_parts = count_path_parts(*temp_repo_dir);
+    auto temp_dir_parts = fs::count_path_parts(*temp_repo_dir);
 
     for (auto& entry: fs::repository_iterator(*temp_repo_dir)) {
       auto path = entry.path();
-      auto relative_path = strip_path_prefix_parts(path, temp_dir_parts);
+      auto relative_path = fs::strip_path_prefix_parts(path, temp_dir_parts);
 
       fs::rename(path, repo_dir / relative_path);
     }

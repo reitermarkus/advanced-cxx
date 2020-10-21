@@ -12,7 +12,7 @@
 using namespace std;
 
 class Patch {
-  fs::path path_;
+  const fs::path path_;
 
   void patch(fs::path dir, bool revert) const {
     SubProcess command("patch");
@@ -40,6 +40,6 @@ class Patch {
   void revert(fs::path dir) const {
     patch(dir, true);
   }
-};
 
-Patch create_patch(fs::path dir_a, fs::path dir_b, fs::path patch_file_path);
+  static Patch create(fs::path dir_a, fs::path dir_b, fs::path patch_file_path);
+};

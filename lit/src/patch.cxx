@@ -1,8 +1,10 @@
 #include "patch.hxx"
 
+#include <iostream>
+
 #include "diff.hxx"
 
-Patch create_patch(fs::path dir_a, fs::path dir_b, fs::path patch_file_path) {
+Patch Patch::create(fs::path dir_a, fs::path dir_b, fs::path patch_file_path) {
   auto file_statuses = dir_diff(dir_a, dir_b);
 
   ofstream patch_file(patch_file_path);

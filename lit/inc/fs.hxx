@@ -10,7 +10,11 @@ namespace fs {
 
 using namespace std::filesystem;
 
-using temp_path = unique_ptr<fs::path, void (*)(fs::path*)>;
+size_t count_path_parts(path path);
+
+path strip_path_prefix_parts(path path, size_t n);
+
+using temp_path = unique_ptr<path, void (*)(path*)>;
 
 temp_path create_temp_directory();
 

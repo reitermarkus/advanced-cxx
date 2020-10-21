@@ -1,22 +1,11 @@
 #include "dir_diff.hxx"
-
-size_t count_path_parts(fs::path path) {
-  return accumulate(path.begin(), path.end(), 0, [](size_t acc, fs::path _) { return acc + 1; });
-}
-
-fs::path strip_path_prefix_parts(fs::path path, size_t n) {
-  auto begin = path.begin();
-  advance(begin, n);
-  fs::path init = *begin;
-  advance(begin, 1);
-  return reduce(begin, path.end(), init, divides<fs::path>());
-}
+#include "fs.hxx"
 
 unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
   unordered_map<string, FileStatus> file_statuses;
 
-  auto dir_a_parts = count_path_parts(dir_a);
-  auto dir_b_parts = count_path_parts(dir_b);
+  auto dir_a_parts = fs::count_path_parts(dir_a);
+  auto dir_b_parts = fs::count_path_parts(dir_b);
 
   auto status_b = [&](fs::directory_entry entry) {
     auto path = entry.path();
@@ -26,7 +15,7 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
       return;
     }
 
-    auto new_path = strip_path_prefix_parts(path, dir_b_parts);
+    auto new_path = fs::strip_path_prefix_parts(path, dir_b_parts);
 
     auto comparison_path = dir_a / new_path;
 
