@@ -3,6 +3,7 @@
 #include <iterator>
 #include <numeric>
 
+namespace lit {
 namespace fs {
 
 size_t count_path_parts(const path& p) {
@@ -39,4 +40,5 @@ recursive_repository_iterator end(const recursive_repository_iterator&) noexcept
   return recursive_repository_iterator();
 }
 
+}
 }

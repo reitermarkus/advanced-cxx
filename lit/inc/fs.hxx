@@ -4,6 +4,7 @@
 #include <optional>
 #include <unistd.h>
 
+namespace lit {
 namespace fs {
 
 using namespace std;
@@ -133,4 +134,5 @@ class recursive_repository_iterator: public repository_iterator {
 recursive_repository_iterator begin(recursive_repository_iterator it) noexcept;
 recursive_repository_iterator end(const recursive_repository_iterator&) noexcept;
 
+}
 }
