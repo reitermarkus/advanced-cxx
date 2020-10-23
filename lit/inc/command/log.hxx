@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <numeric>
 
 #include "command.hxx"
 #include "repository.hxx"
@@ -30,6 +31,7 @@ class Log: public Command {
 
     vector<shared_ptr<::lit::Commit>> commits(revisions, nullptr);
     vector<vector<shared_ptr<::lit::Commit>>> children(revisions, vector<shared_ptr<::lit::Commit>>());
+    vector<vector<shared_ptr<::lit::Commit>>> parents(revisions, vector<shared_ptr<::lit::Commit>>());
 
     for (auto i = 0; i <= latest_revision_n; i++) {
       const auto commit = repo().commit(Revision(i));
@@ -45,6 +47,27 @@ class Log: public Command {
 
       if (parent_b) {
         children[parent_b->number()].push_back(commits[i]);
+      }
+    }
+
+    for (auto i = 0; i <= latest_revision_n; i++) {
+      auto commit = commits[i];
+
+      const auto parent_a = commit->parent_a();
+      const auto parent_b = commit->parent_b();
+
+      if (parent_a) {
+        if (parent_b) {
+          if (children[parent_a->number()].size() > children[parent_b->number()].size()) {
+            parents[i].push_back(commits[parent_b->number()]);
+            parents[i].push_back(commits[parent_a->number()]);
+          } else {
+            parents[i].push_back(commits[parent_a->number()]);
+            parents[i].push_back(commits[parent_b->number()]);
+          }
+        } else {
+          parents[i].push_back(commits[parent_a->number()]);
+        }
       }
     }
 
@@ -103,6 +126,7 @@ class Log: public Command {
       auto parent_b = commit->parent_b();
 
       bool printed_self = false;
+      bool printed_right_parent = false;
 
       for (auto b = 0; b < branches[i].size(); b++) {
         auto r = branches[i][b];
@@ -122,32 +146,30 @@ class Log: public Command {
           bool is_right_parent = parent_b && parent_b->number() == r;
 
           if (is_right_parent) {
-            cout << "─";
+            if (printed_right_parent) {
+              cout << " │";
+            } else {
+              size_t right_parent_children = children[parent_b->number()].size();
 
-            size_t right_parent_children = children[parent_b->number()].size();
-
-            switch (right_parent_children) {
-              case 1: {
+              cout << "─";
+              if (right_parent_children == 1) {
                 cout << "┐";
-                break;
-              }
-              case 2: {
+              } else {
                 cout << "┤";
-                break;
               }
-              default: {
-                cout << "┼";
-                break;
-              }
-            }
 
+              printed_right_parent = true;
+            }
           } else {
             if (b > 0) {
               cout << " ";
             }
 
-            bool has_children = children[r].size() > 0;
-            if (has_children) {
+            const auto max_children = accumulate(children[r].begin(), children[r].end(), 0, [](size_t acc, auto child) {
+              return max(acc, child->revision().number());
+            });
+
+            if (i <= max_children) {
               cout << "│";
             } else {
               cout << " ";
@@ -165,6 +187,18 @@ class Log: public Command {
       }
 
       cout << commit->id() << ": " << commit->message() << endl;
+    }
+
+    cout << "Branches: " << endl;
+
+    for (auto i = latest_revision_n; i <= latest_revision_n; i--) {
+      cout << i << ": ";
+
+      for (auto& b: branches[i]) {
+        cout << b << " ";
+      }
+
+      cout << endl;
     }
 
     return 0;
