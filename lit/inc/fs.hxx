@@ -4,10 +4,9 @@
 #include <optional>
 #include <unistd.h>
 
-using namespace std;
-
 namespace fs {
 
+using namespace std;
 using namespace std::filesystem;
 
 size_t count_path_parts(const path& p);
