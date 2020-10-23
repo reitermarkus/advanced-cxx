@@ -15,14 +15,14 @@ namespace lit {
 vector<unique_ptr<Command>> Command::list() {
   vector<unique_ptr<Command>> commands;
 
-  commands.emplace_back(new command::Checkout());
-  commands.emplace_back(new command::Commit());
-  commands.emplace_back(new command::Help());
-  commands.emplace_back(new command::Init());
-  commands.emplace_back(new command::Log());
-  commands.emplace_back(new command::Merge());
-  commands.emplace_back(new command::Show());
-  commands.emplace_back(new command::Status());
+  commands.emplace_back(new CheckoutCommand());
+  commands.emplace_back(new CommitCommand());
+  commands.emplace_back(new HelpCommand());
+  commands.emplace_back(new InitCommand());
+  commands.emplace_back(new LogCommand());
+  commands.emplace_back(new MergeCommand());
+  commands.emplace_back(new ShowCommand());
+  commands.emplace_back(new StatusCommand());
 
   return commands;
 }

@@ -19,11 +19,10 @@
 #include "revision.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Commit: public Command {
+class CommitCommand: public Command {
   public:
   string name() const override {
     return "commit";
@@ -43,7 +42,7 @@ class Commit: public Command {
     const auto current_revision = repo().current_revision();
     const auto merge_revision = repo().merge_revision();
     const auto commit =
-        ::lit::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
+        Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
 
     cout << "Creating commit " << commit.id() << " '" << commit.message() << "'" << endl;
 
@@ -53,5 +52,4 @@ class Commit: public Command {
   }
 };
 
-}
 }

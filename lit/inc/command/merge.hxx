@@ -10,11 +10,10 @@
 #include "revision.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Merge: public Command {
+class MergeCommand: public Command {
   public:
   string name() const override {
     return "merge";
@@ -118,7 +117,7 @@ class Merge: public Command {
       const auto next_revision = repo().next_revision();
       const auto commit_message = "Merge " + merge_revision.id() + " into " + current_revision.id();
       const auto commit =
-          ::lit::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), commit_message);
+          Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), commit_message);
 
       repo().create_commit(commit, current_revision);
     } else {
@@ -137,5 +136,4 @@ class Merge: public Command {
   }
 };
 
-}
 }

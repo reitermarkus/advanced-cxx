@@ -9,11 +9,10 @@
 #include "repository.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Log: public Command {
+class LogCommand: public Command {
   public:
   string name() const override {
     return "log";
@@ -29,7 +28,7 @@ class Log: public Command {
     const auto latest_revision_n = latest_revision.number();
     const auto revisions = latest_revision_n + 1;
 
-    vector<shared_ptr<::lit::Commit>> commits(revisions, nullptr);
+    vector<shared_ptr<Commit>> commits(revisions, nullptr);
     vector<vector<size_t>> children(revisions, vector<size_t>());
 
     for (auto i = 0; i <= latest_revision_n; i++) {
@@ -38,7 +37,7 @@ class Log: public Command {
       const auto parent_a = commit.parent_a();
       const auto parent_b = commit.parent_b();
 
-      commits[i] = shared_ptr<::lit::Commit>(new ::lit::Commit(commit));
+      commits[i] = shared_ptr<Commit>(new Commit(commit));
 
       if (parent_a) {
         children[parent_a->number()].push_back(i);
@@ -202,5 +201,4 @@ class Log: public Command {
   }
 };
 
-}
 }

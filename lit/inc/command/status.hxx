@@ -10,11 +10,10 @@
 #include "repository.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Status: public Command {
+class StatusCommand: public Command {
   public:
   string name() const override {
     return "status";
@@ -51,5 +50,4 @@ class Status: public Command {
   }
 };
 
-}
 }

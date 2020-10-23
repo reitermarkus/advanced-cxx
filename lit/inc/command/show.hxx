@@ -7,11 +7,10 @@
 #include "revision.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Show: public Command {
+class ShowCommand: public Command {
   public:
   string name() const override {
     return "show";
@@ -44,5 +43,4 @@ class Show: public Command {
   }
 };
 
-}
 }

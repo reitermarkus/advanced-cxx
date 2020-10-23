@@ -11,11 +11,10 @@
 #include "revision.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Checkout: public Command {
+class CheckoutCommand: public Command {
   public:
   string name() const override {
     return "checkout";
@@ -36,5 +35,4 @@ class Checkout: public Command {
   }
 };
 
-}
 }

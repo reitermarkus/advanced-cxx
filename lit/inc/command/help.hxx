@@ -3,11 +3,10 @@
 #include "command.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Help: public Command {
+class HelpCommand: public Command {
   public:
   string name() const override {
     return "help";
@@ -23,5 +22,4 @@ class Help: public Command {
   }
 };
 
-}
 }

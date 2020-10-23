@@ -8,11 +8,10 @@
 #include "repository.hxx"
 
 namespace lit {
-namespace command {
 
 using namespace std;
 
-class Init: public Command {
+class InitCommand: public Command {
   public:
   string name() const override {
     return "init";
@@ -34,5 +33,4 @@ class Init: public Command {
   }
 };
 
-}
 }
