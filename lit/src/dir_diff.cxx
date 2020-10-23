@@ -34,7 +34,7 @@ unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path
     const auto path = entry.path();
     const auto new_path = fs::strip_path_prefix_parts(path, dir_a_parts);
 
-    if (file_statuses.contains(new_path)) {
+    if (file_statuses.find(new_path) != file_statuses.end()) {
       return;
     }
 

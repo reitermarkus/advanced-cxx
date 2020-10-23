@@ -87,7 +87,7 @@ class Merge: public Command {
     for (const auto& entry: file_statuses_merge) {
       const auto [path, status] = entry;
 
-      if (file_statuses_current.contains(path)) {
+      if (file_statuses_current.find(path) != file_statuses_current.end()) {
         file_statuses_current.erase(path);
         conflicts.insert(path);
         continue;
