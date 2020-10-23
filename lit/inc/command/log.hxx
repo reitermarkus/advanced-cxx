@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <memory>
 #include <numeric>
 
 #include "command.hxx"
@@ -28,7 +27,8 @@ class LogCommand: public Command {
     const auto latest_revision_n = latest_revision.number();
     const auto revisions = latest_revision_n + 1;
 
-    vector<shared_ptr<Commit>> commits(revisions, nullptr);
+    vector<Commit> commits;
+    commits.reserve(revisions);
     vector<vector<size_t>> children(revisions, vector<size_t>());
 
     for (size_t i = 0; i <= latest_revision_n; i++) {
@@ -37,7 +37,7 @@ class LogCommand: public Command {
       const auto parent_a = commit.parent_a();
       const auto parent_b = commit.parent_b();
 
-      commits[i] = shared_ptr<Commit>(new Commit(commit));
+      commits[i] = commit;
 
       if (parent_a) {
         children[parent_a->number()].push_back(i);
@@ -54,7 +54,7 @@ class LogCommand: public Command {
     for (size_t i = 0; i <= latest_revision_n; i++) {
       const auto commit = commits[i];
 
-      const auto parent_a = commit->parent_a();
+      const auto parent_a = commit.parent_a();
 
       if (i == 0) {
         branches[i].push_back(i);
@@ -76,7 +76,7 @@ class LogCommand: public Command {
       for (size_t c = 0; (c + 1) < children[i].size(); c++) {
         const auto child = children[i][c];
 
-        const auto right_parent = commits[child]->parent_b();
+        const auto right_parent = commits[child].parent_b();
         if (right_parent && i == right_parent->number()) {
           continue;
         }
@@ -102,7 +102,7 @@ class LogCommand: public Command {
     for (size_t i = latest_revision_n; i <= latest_revision_n; i--) {
       const auto commit = commits[i];
 
-      const auto parent_b = commit->parent_b();
+      const auto parent_b = commit.parent_b();
 
       bool printed_self = false;
       bool printed_right_parent = false;
@@ -169,7 +169,7 @@ class LogCommand: public Command {
             }
 
             const size_t max_child = accumulate(children[r].begin(), children[r].end(), 0,
-                                              [](size_t acc, size_t child) { return max(acc, child); });
+                                                [](size_t acc, size_t child) { return max(acc, child); });
 
             if (i <= max_child) {
               cout << "│";
@@ -194,7 +194,7 @@ class LogCommand: public Command {
         cout << "  ";
       }
 
-      cout << commit->id() << ": " << commit->message() << endl;
+      cout << commit.id() << ": " << commit.message() << endl;
     }
 
     return 0;
