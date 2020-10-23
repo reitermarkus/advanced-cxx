@@ -62,7 +62,9 @@ class Log: public Command {
       } else {
         bool marked_self = false;
 
-        for (const auto parent: branches[i - 1]) {
+        for (auto p = 0; p < branches[i - 1].size(); p++) {
+          const auto parent = branches[i - 1][p];
+
           if (parent_a && parent == parent_a->number() && !marked_self) {
             branches[i].push_back(i);
             marked_self = true;
@@ -130,7 +132,7 @@ class Log: public Command {
               size_t right_parent_children = children[parent_b->number()].size();
 
               cout << "─";
-              if (right_parent_children == 1) {
+              if (right_parent_children == 1 || i == latest_revision_n) {
                 cout << "┐";
               } else {
                 cout << "┤";
@@ -139,10 +141,28 @@ class Log: public Command {
               printed_right_parent = true;
             }
           } else {
-            if (b > 0) {
-              bool previous_is_next = (b + 1) < branches[i].size() ? branches[i][b - 1] == branches[i][b + 1] : false;
+            bool i_crosses_current = false;
 
-              if (previous_is_next) {
+            if (b > 0) {
+              if ((b + 1) < branches[i].size()) {
+                if (!printed_right_parent) {
+                  const auto left = branches[i][b - 1];
+                  const auto right = branches[i][b + 1];
+
+                  if (left == i && left == right) {
+                    i_crosses_current = true;
+                  } else if (parent_b) {
+                    for (auto b2 = b; b2 < branches[i].size(); b2++) {
+                      if (branches[i][b2] == parent_b->number()) {
+                        i_crosses_current = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+
+              if (i_crosses_current) {
                 cout << "─";
               } else {
                 cout << " ";
@@ -154,6 +174,8 @@ class Log: public Command {
 
             if (i <= max_child) {
               cout << "│";
+            } else if (i_crosses_current) {
+              cout << "─";
             } else {
               cout << " ";
             }
