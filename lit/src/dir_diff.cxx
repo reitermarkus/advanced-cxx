@@ -2,22 +2,21 @@
 
 #include "fs.hxx"
 
-unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
+unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path& dir_b) {
   unordered_map<string, FileStatus> file_statuses;
 
-  auto dir_a_parts = fs::count_path_parts(dir_a);
-  auto dir_b_parts = fs::count_path_parts(dir_b);
+  const auto dir_a_parts = fs::count_path_parts(dir_a);
+  const auto dir_b_parts = fs::count_path_parts(dir_b);
 
-  auto status_b = [&](fs::directory_entry entry) {
-    auto path = entry.path();
+  const auto status_b = [&](const fs::directory_entry& entry) {
+    const auto path = entry.path();
+    const auto new_path = fs::strip_path_prefix_parts(path, dir_b_parts);
 
-    auto new_path = fs::strip_path_prefix_parts(path, dir_b_parts);
+    const auto comparison_path = dir_a / new_path;
 
-    auto comparison_path = dir_a / new_path;
-
-    auto existed_previously = exists(comparison_path);
+    const auto existed_previously = exists(comparison_path);
     if (existed_previously) {
-      auto diff = Diff(path, comparison_path);
+      const auto diff = Diff(path, comparison_path);
 
       if (diff.is_changed()) {
         file_statuses[string(new_path)] = Modified;
@@ -31,16 +30,15 @@ unordered_map<string, FileStatus> dir_diff(fs::path dir_a, fs::path dir_b) {
     status_b(entry);
   }
 
-  auto status_a = [&](fs::directory_entry entry) {
-    auto path = entry.path();
-
-    auto new_path = fs::strip_path_prefix_parts(path, dir_a_parts);
+  const auto status_a = [&](const fs::directory_entry& entry) {
+    const auto path = entry.path();
+    const auto new_path = fs::strip_path_prefix_parts(path, dir_a_parts);
 
     if (file_statuses.contains(new_path)) {
       return;
     }
 
-    auto was_deleted = !exists(dir_b / new_path);
+    const auto was_deleted = !exists(dir_b / new_path);
     if (was_deleted) {
       file_statuses[string(new_path)] = Deleted;
     }

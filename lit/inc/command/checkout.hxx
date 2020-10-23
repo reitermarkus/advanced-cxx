@@ -26,8 +26,8 @@ class Checkout: public Command {
     return 1;
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto target_revision = arguments.empty() ? *repo().current_revision() : Revision(arguments[0]);
+  int run_inner(vector<string>&& arguments) override {
+    const auto target_revision = arguments.empty() ? *repo().current_revision() : Revision(move(arguments[0]));
 
     repo().checkout(target_revision);
 

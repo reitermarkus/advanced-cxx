@@ -13,7 +13,7 @@ using namespace std;
 class Command {
   optional<Repository> repo_;
 
-  optional<string> check_arguments(vector<string>& arguments) {
+  optional<string> check_arguments(const vector<string>& arguments) {
     if (min_arguments() == max_arguments()) {
       if (min_arguments() != arguments.size()) {
         if (min_arguments() == 0) {
@@ -54,10 +54,10 @@ class Command {
     return 0;
   };
 
-  virtual int run_inner(vector<string>& arguments) = 0;
+  virtual int run_inner(vector<string>&& arguments) = 0;
 
-  int run(vector<string>& arguments) {
-    auto argument_error = check_arguments(arguments);
+  int run(vector<string>&& arguments) {
+    const auto argument_error = check_arguments(arguments);
     if (argument_error) {
       cerr << *argument_error << endl;
       cerr << endl;
@@ -65,7 +65,7 @@ class Command {
       return 1;
     }
 
-    return run_inner(arguments);
+    return run_inner(move(arguments));
   }
 
   static vector<unique_ptr<Command>> list();

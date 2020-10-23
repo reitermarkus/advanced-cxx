@@ -12,17 +12,18 @@
 using namespace std;
 
 class Patch {
-  const fs::path path_;
+  fs::path path_;
 
-  void patch(fs::path dir, bool revert) const {
+  void patch(const fs::path& dir, bool revert) const {
     SubProcess command("patch");
+
     command.arg("-d").arg(dir).arg("-t").arg("-s").arg("-p1").arg("-i").arg(this->path_);
 
     if (revert) {
       command.arg("-R");
     }
 
-    auto [output, status] = command.output();
+    const auto [output, status] = command.output();
     assert(status == 0);
   }
 
@@ -33,13 +34,13 @@ class Patch {
     return this->path_;
   }
 
-  void apply(fs::path dir) const {
+  void apply(const fs::path& dir) const {
     patch(dir, false);
   }
 
-  void revert(fs::path dir) const {
+  void revert(const fs::path& dir) const {
     patch(dir, true);
   }
 
-  static Patch create(fs::path dir_a, fs::path dir_b, fs::path patch_file_path);
+  static Patch create(const fs::path& dir_a, const fs::path& dir_b, const fs::path& patch_file_path);
 };

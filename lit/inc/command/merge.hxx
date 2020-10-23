@@ -28,15 +28,15 @@ class Merge: public Command {
     return 1;
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto status = repo().status();
+  int run_inner(vector<string>&& arguments) override {
+    const auto status = repo().status();
     if (!status.empty()) {
       cerr << "Cannot merge with uncommitted files." << endl;
       return 1;
     }
 
-    auto current_revision = repo().current_revision().value();
-    auto merge_revision = Revision(arguments[0]);
+    const auto current_revision = repo().current_revision().value();
+    const auto merge_revision = Revision(move(arguments[0]));
 
     if (current_revision == merge_revision) {
       cerr << "Cannot merge current revision with itself." << endl;
@@ -45,7 +45,7 @@ class Merge: public Command {
 
     cout << "Merging " << merge_revision.id() << " into " << current_revision.id() << endl;
 
-    auto base_revision = repo().merge_base(current_revision, merge_revision);
+    const auto base_revision = repo().merge_base(current_revision, merge_revision);
     if (!base_revision) {
       cerr << "No merge base found for " << current_revision.id() << " and " << merge_revision.id() << endl;
       return 1;
@@ -53,14 +53,14 @@ class Merge: public Command {
 
     cout << "Merge base: " << base_revision.value().id() << endl;
 
-    auto temp_repo_dir_base = repo().checkout_temp_directory(base_revision);
-    auto temp_repo_dir_merge = repo().checkout_temp_directory(optional(merge_revision));
+    const auto temp_repo_dir_base = repo().checkout_temp_directory(base_revision);
+    const auto temp_repo_dir_merge = repo().checkout_temp_directory(optional(merge_revision));
 
-    auto repo_dir = repo().dir();
+    const auto repo_dir = repo().dir();
     auto file_statuses_current = dir_diff(*temp_repo_dir_base, repo_dir);
-    auto file_statuses_merge = dir_diff(*temp_repo_dir_base, *temp_repo_dir_merge);
+    const auto file_statuses_merge = dir_diff(*temp_repo_dir_base, *temp_repo_dir_merge);
 
-    auto move_and_create_directory = [](fs::path from, fs::path to) {
+    const auto move_and_create_directory = [](const fs::path& from, const fs::path& to) {
       if (to.has_parent_path()) {
         fs::create_directory(to.parent_path());
       }
@@ -70,7 +70,7 @@ class Merge: public Command {
 
     unordered_set<string> conflicts;
 
-    auto move_changed_files = [&](fs::path temp_repo_dir, string path, FileStatus status) {
+    const auto move_changed_files = [&](const fs::path& temp_repo_dir, const string& path, const FileStatus& status) {
       switch (status) {
         case Added:
         case Modified: {
@@ -84,8 +84,8 @@ class Merge: public Command {
       }
     };
 
-    for (auto& entry: file_statuses_merge) {
-      auto [path, status] = entry;
+    for (const auto& entry: file_statuses_merge) {
+      const auto [path, status] = entry;
 
       if (file_statuses_current.contains(path)) {
         file_statuses_current.erase(path);
@@ -96,14 +96,14 @@ class Merge: public Command {
       move_changed_files(*temp_repo_dir_merge, path, status);
     }
 
-    for (auto& entry: file_statuses_current) {
-      auto [path, status] = entry;
+    for (const auto& entry: file_statuses_current) {
+      const auto [path, status] = entry;
 
       move_changed_files(repo_dir, path, status);
     }
 
-    for (auto& path: conflicts) {
-      auto move_if_exists = [&](fs::path from, fs::path to) {
+    for (const auto& path: conflicts) {
+      const auto move_if_exists = [&](const fs::path& from, const fs::path& to) {
         if (fs::exists(from) || fs::is_symlink(from)) {
           move_and_create_directory(from, to);
         }
@@ -114,16 +114,16 @@ class Merge: public Command {
     }
 
     if (conflicts.empty()) {
-      auto next_revision = repo().next_revision();
-      auto commit_message = "Merge " + merge_revision.id() + " into " + current_revision.id();
-      auto commit =
+      const auto next_revision = repo().next_revision();
+      const auto commit_message = "Merge " + merge_revision.id() + " into " + current_revision.id();
+      const auto commit =
           ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), commit_message);
 
       repo().create_commit(commit, current_revision);
     } else {
       cerr << "Merge conflict(s) detected:" << endl;
 
-      for (auto& path: conflicts) {
+      for (const auto& path: conflicts) {
         cerr << "  - " << path << endl;
       }
 

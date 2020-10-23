@@ -20,8 +20,8 @@ class Init: public Command {
     return "Create an empty Lit repository or reinitialize an existing one";
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto lit_dir = string(repo().lit_dir());
+  int run_inner(vector<string>&& arguments) override {
+    const auto lit_dir = string(repo().lit_dir());
     if (repo().is_initialized()) {
       cout << "Reinitialized existing Lit repository in " << lit_dir << endl;
     } else {

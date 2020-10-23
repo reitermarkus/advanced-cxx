@@ -84,16 +84,16 @@ class Commit {
     string line;
 
     getline(is, line);
-    auto revision = Revision(line);
+    const auto revision = Revision(move(line));
 
     getline(is, line);
-    auto parent_a = line.empty() ? nullopt : optional(Revision(line));
+    const auto parent_a = line.empty() ? nullopt : optional(Revision(move(line)));
 
     getline(is, line);
-    auto parent_b = line.empty() ? nullopt : optional(Revision(line));
+    const auto parent_b = line.empty() ? nullopt : optional(Revision(move(line)));
 
     getline(is, line);
-    auto date = chrono::system_clock::from_time_t(stoul(line));
+    const auto date = chrono::system_clock::from_time_t(stoul(line));
 
     string message((istreambuf_iterator<char>(is)), istreambuf_iterator<char>());
     message.pop_back();

@@ -19,14 +19,14 @@ class Log: public Command {
     return "Display a graph of all commits.";
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto latest_revision = repo().latest_revision().value();
-    auto current_revision = repo().current_revision().value();
+  int run_inner(vector<string>&& arguments) override {
+    const auto latest_revision = repo().latest_revision().value();
+    const auto current_revision = repo().current_revision().value();
 
-    auto latest_revision_n = latest_revision.number();
-    auto revisions = latest_revision_n + 1;
+    const auto latest_revision_n = latest_revision.number();
+    const auto revisions = latest_revision_n + 1;
     vector<vector<long long>> children(revisions, vector<long long>());
-    vector<decltype(latest_revision_n)> unfinished(revisions, 0);
+    vector<size_t> unfinished(revisions, 0);
 
     size_t indentation = 0;
     size_t max_indentation = 0;
@@ -34,10 +34,10 @@ class Log: public Command {
     bool previous_was_merge_commit = false;
 
     for (ssize_t i = latest_revision_n; i >= 0; i--) {
-      auto commit = repo().commit(Revision(i));
+      const auto commit = repo().commit(Revision(i));
 
-      auto parent_a = commit.parent_a();
-      auto parent_b = commit.parent_b();
+      const auto parent_a = commit.parent_a();
+      const auto parent_b = commit.parent_b();
 
       if (parent_a) {
         children[parent_a.value().number()].push_back(i);
@@ -47,8 +47,8 @@ class Log: public Command {
         children[parent_b.value().number()].push_back(i);
       }
 
-      auto is_root_commit = !bool(parent_a);
-      auto is_merge_commit = bool(parent_b);
+      const auto is_root_commit = !bool(parent_a);
+      const auto is_merge_commit = bool(parent_b);
 
       for (auto& child: children[i]) {
         unfinished[child] -= 1;

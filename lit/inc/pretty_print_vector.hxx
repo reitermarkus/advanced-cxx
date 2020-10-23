@@ -7,7 +7,7 @@
 
 using namespace std;
 
-template <typename T> ostream& operator<<(ostream& os, vector<T> vec) {
+template <typename T> ostream& operator<<(ostream& os, const vector<T>& vec) {
   os << "[";
 
   for (size_t i = 0; i < vec.size(); i++) {
@@ -23,7 +23,7 @@ template <typename T> ostream& operator<<(ostream& os, vector<T> vec) {
   return os;
 }
 
-template <typename T> ostream& operator<<(ostream& os, deque<T> vec) {
+template <typename T> ostream& operator<<(ostream& os, const deque<T>& vec) {
   os << "[";
 
   for (size_t i = 0; i < vec.size(); i++) {

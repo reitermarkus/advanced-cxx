@@ -19,12 +19,12 @@ using namespace std;
 class Repository {
   fs::path path;
 
-  fs::path revision_file(string type) {
+  fs::path revision_file(const string& type) {
     return lit_dir() / ("revision." + type);
   }
 
-  optional<Revision> read_revision(string type) {
-    auto path = revision_file(type);
+  optional<Revision> read_revision(const string& type) {
+    const auto path = revision_file(type);
 
     if (!fs::exists(path)) {
       return nullopt;
@@ -34,18 +34,18 @@ class Repository {
     string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
     id.pop_back();
 
-    return optional(Revision(id));
+    return optional(Revision(move(id)));
   }
 
   void remove_merge_revision() {
-    auto path = revision_file("merge");
+    const auto path = revision_file("merge");
 
     if (fs::exists(path)) {
       fs::remove(path);
     }
   }
 
-  void write_revision(string type, Revision revision) {
+  void write_revision(const string& type, const Revision& revision) {
     ofstream file(revision_file(type));
     file << revision.id() << endl;
   }
@@ -77,17 +77,17 @@ class Repository {
   }
 
   unordered_map<string, FileStatus> status() {
-    auto temp_repo_dir = checkout_temp_directory(current_revision());
+    const auto temp_repo_dir = checkout_temp_directory(current_revision());
 
-    auto file_statuses = dir_diff(*temp_repo_dir, dir());
+    const auto file_statuses = dir_diff(*temp_repo_dir, dir());
 
     return file_statuses;
   }
 
-  void write_current_revision(Revision revision) {
+  void write_current_revision(const Revision& revision) {
     write_revision("current", revision);
 
-    auto latest = latest_revision();
+    const auto latest = latest_revision();
     if (!latest || revision.number() > latest->number()) {
       write_revision("latest", revision);
     }
@@ -95,7 +95,7 @@ class Repository {
     remove_merge_revision();
   }
 
-  void write_merge_revision(Revision revision) {
+  void write_merge_revision(const Revision& revision) {
     write_revision("merge", revision);
   }
 
@@ -112,7 +112,7 @@ class Repository {
   }
 
   Revision next_revision() {
-    auto rev = latest_revision();
+    const auto rev = latest_revision();
 
     if (rev) {
       return Revision(rev.value().number() + 1);
@@ -121,43 +121,43 @@ class Repository {
     }
   }
 
-  Commit commit(Revision revision) {
+  Commit commit(const Revision& revision) {
     ifstream meta(revisions_dir() / revision.meta_filename());
     return Commit::deserialize(meta);
   }
 
   void create_commit(Commit commit, optional<Revision> current_revision) {
-    auto temp_dir = fs::create_temp_directory();
+    const auto temp_dir = fs::create_temp_directory();
 
-    auto meta_file_path = *temp_dir / commit.revision().meta_filename();
-    auto patch_file_path = *temp_dir / commit.revision().patch_filename();
+    const auto meta_file_path = *temp_dir / commit.revision().meta_filename();
+    const auto patch_file_path = *temp_dir / commit.revision().patch_filename();
 
     ofstream meta_file(meta_file_path);
     commit.serialize(meta_file);
     meta_file.close();
 
-    auto temp_repo_dir = checkout_temp_directory(current_revision);
-    auto patch = Patch::create(*temp_repo_dir, dir(), patch_file_path);
+    const auto temp_repo_dir = checkout_temp_directory(current_revision);
+    const auto patch = Patch::create(*temp_repo_dir, dir(), patch_file_path);
 
     fs::rename(meta_file_path, revisions_dir() / commit.revision().meta_filename());
-    fs::rename(patch_file_path, revisions_dir() / commit.revision().patch_filename());
+    fs::rename(patch.path(), revisions_dir() / commit.revision().patch_filename());
 
     write_current_revision(commit.revision());
   }
 
-  fs::temp_path checkout_temp_directory(optional<Revision> revision) {
+  fs::temp_path checkout_temp_directory(const optional<Revision>& revision) {
     auto temp_repo_dir = fs::create_temp_directory();
 
     deque<Revision> revisions;
 
     auto current_revision = revision;
     while (current_revision) {
-      auto r = current_revision.value();
+      const auto r = current_revision.value();
       revisions.push_front(r);
       current_revision = commit(r).parent_a();
     }
 
-    for (auto& r: revisions) {
+    for (const auto& r: revisions) {
       Patch patch(revisions_dir() / r.patch_filename());
       patch.apply(*temp_repo_dir);
     }
@@ -165,20 +165,20 @@ class Repository {
     return temp_repo_dir;
   }
 
-  void checkout(Revision revision) {
-    auto repo_dir = dir();
-    auto temp_repo_dir = checkout_temp_directory(optional(revision));
+  void checkout(const Revision& revision) {
+    const auto repo_dir = dir();
+    const auto temp_repo_dir = checkout_temp_directory(optional(revision));
 
-    auto repo_lit_dir = lit_dir();
-    for (auto& entry: fs::repository_iterator(repo_dir)) {
+    const auto repo_lit_dir = lit_dir();
+    for (const auto& entry: fs::repository_iterator(repo_dir)) {
       fs::remove_all(entry.path());
     }
 
-    auto temp_dir_parts = fs::count_path_parts(*temp_repo_dir);
+    const auto temp_dir_parts = fs::count_path_parts(*temp_repo_dir);
 
-    for (auto& entry: fs::repository_iterator(*temp_repo_dir)) {
-      auto path = entry.path();
-      auto relative_path = fs::strip_path_prefix_parts(path, temp_dir_parts);
+    for (const auto& entry: fs::repository_iterator(*temp_repo_dir)) {
+      const auto path = entry.path();
+      const auto relative_path = fs::strip_path_prefix_parts(path, temp_dir_parts);
 
       fs::rename(path, repo_dir / relative_path);
     }
@@ -194,9 +194,9 @@ class Repository {
     }
   }
 
-  optional<Revision> merge_base(Revision revision_a, Revision revision_b) {
-    auto next_parent = [&](Revision revision) {
-      auto c = commit(revision);
+  optional<Revision> merge_base(const Revision& revision_a, const Revision& revision_b) {
+    const auto next_parent = [&](const Revision& revision) {
+      const auto c = commit(revision);
 
       if (c.parent_b()) {
         return c.parent_b();

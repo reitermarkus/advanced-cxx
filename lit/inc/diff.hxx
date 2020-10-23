@@ -13,27 +13,28 @@ class Diff {
   string patch;
 
   public:
-  Diff(fs::path a, fs::path b, string label_a, string label_b) {
+  Diff(const fs::path& a, const fs::path& b, const string& label_a, const string& label_b) {
     SubProcess diff("diff");
     diff.arg("-u");
+    diff.arg("-N");
     diff.arg(string(a)).arg(string(b));
     diff.arg("--label").arg(label_a);
     diff.arg("--label").arg(label_b);
 
-    auto [output, status] = diff.output();
+    const auto [output, status] = diff.output();
 
     assert(status == 0 || status == 1);
 
     this->is_changed_ = status == 1;
     this->patch = output;
   }
-  Diff(fs::path a, fs::path b): Diff(a, b, string(a), string(b)) {}
+  Diff(const fs::path& a, const fs::path& b): Diff(a, b, string(a), string(b)) {}
 
-  bool is_changed() {
+  bool is_changed() const {
     return this->is_changed_;
   }
 
-  string& output() {
+  const string& output() const {
     return this->patch;
   }
 };

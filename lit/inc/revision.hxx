@@ -10,7 +10,7 @@ class Revision {
   unsigned long number_;
 
   public:
-  Revision(string id) {
+  Revision(string&& id) {
     if (id[0] != 'r') {
       cerr << "Invalid revision ID: '" << id << "'" << endl;
       abort();

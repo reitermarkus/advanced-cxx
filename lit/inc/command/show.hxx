@@ -22,16 +22,16 @@ class Show: public Command {
     return 1;
   }
 
-  int run_inner(vector<string>& arguments) override {
+  int run_inner(vector<string>&& arguments) override {
     optional<Revision> revision;
 
     if (arguments.size() == 1) {
-      revision = optional(Revision(arguments[0]));
+      revision = optional(Revision(move(arguments[0])));
     } else {
       revision = repo().current_revision();
     }
 
-    auto commit = repo().commit(revision.value());
+    const auto commit = repo().commit(revision.value());
     commit.pretty_print(cout);
 
     cout << endl;

@@ -1,14 +1,15 @@
 #include "fs.hxx"
 
 #include <numeric>
+#include <iterator>
 
 namespace fs {
 
-size_t count_path_parts(fs::path path) {
-  return accumulate(path.begin(), path.end(), 0, [](size_t acc, fs::path _) { return acc + 1; });
+size_t count_path_parts(const path& p) {
+  return distance(p.begin(), p.end());
 }
 
-path strip_path_prefix_parts(path p, size_t n) {
+path strip_path_prefix_parts(const path& p, const size_t n) {
   auto begin = p.begin();
   advance(begin, n);
   path init = *begin;
@@ -17,9 +18,9 @@ path strip_path_prefix_parts(path p, size_t n) {
 }
 
 temp_path create_temp_directory() {
-  auto pattern = temp_directory_path() / "lit.XXXXXX";
+  auto pattern = string(temp_directory_path() / "lit.XXXXXX");
 
-  return temp_path(new path(mkdtemp((char*)pattern.c_str())), [](fs::path* path) { fs::remove_all(*path); });
+  return temp_path(new path(mkdtemp(&pattern[0])), [](fs::path* path) { fs::remove_all(*path); });
 }
 
 repository_iterator begin(repository_iterator it) noexcept {

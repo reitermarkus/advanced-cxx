@@ -15,14 +15,14 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  auto command_name = string(argv[1]);
+  const auto command_name = string(argv[1]);
 
-  auto commands = Command::list();
+  const auto commands = Command::list();
 
-  for (auto& command: commands) {
+  for (const auto& command: commands) {
     if (command->name() == command_name) {
       vector<string> arguments(argv + 2, argv + argc);
-      return command->run(arguments);
+      return command->run(move(arguments));
     }
   }
 

@@ -37,11 +37,11 @@ class Commit: public Command {
     return 1;
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto next_revision = repo().next_revision();
-    auto current_revision = repo().current_revision();
-    auto merge_revision = repo().merge_revision();
-    auto commit = ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
+  int run_inner(vector<string>&& arguments) override {
+    const auto next_revision = repo().next_revision();
+    const auto current_revision = repo().current_revision();
+    const auto merge_revision = repo().merge_revision();
+    const auto commit = ::Commit(next_revision, current_revision, merge_revision, chrono::system_clock::now(), arguments[0]);
 
     cout << "Creating commit " << commit.id() << " '" << commit.message() << "'" << endl;
 

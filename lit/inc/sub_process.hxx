@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdio>
 #include <filesystem>
+#include <iostream>
 #include <stdexcept>
 
 #include "fs.hxx"
@@ -13,11 +14,11 @@ class SubProcess {
   string command;
 
   public:
-  SubProcess(string command) {
+  SubProcess(const string& command) {
     this->command = "'" + command + "'";
   }
 
-  SubProcess& arg(string arg) {
+  SubProcess& arg(const string& arg) {
     this->command += " '" + arg + "'";
     return *this;
   }
@@ -36,7 +37,7 @@ class SubProcess {
       output += buffer.data();
     }
 
-    auto status = pclose(pipe);
+    const auto status = pclose(pipe);
 
     if (status == -1) {
       throw runtime_error("pclose failed");

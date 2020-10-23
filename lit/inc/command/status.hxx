@@ -22,11 +22,11 @@ class Status: public Command {
     return "Show the working tree status.";
   }
 
-  int run_inner(vector<string>& arguments) override {
-    auto file_statuses = repo().status();
+  int run_inner(vector<string>&& arguments) override {
+    const auto file_statuses = repo().status();
 
-    for (auto& entry: file_statuses) {
-      auto [path, status] = entry;
+    for (const auto& entry: file_statuses) {
+      const auto [path, status] = entry;
 
       switch (status) {
         case Added: {

@@ -10,9 +10,9 @@ namespace fs {
 
 using namespace std::filesystem;
 
-size_t count_path_parts(path path);
+size_t count_path_parts(const path& p);
 
-path strip_path_prefix_parts(path path, size_t n);
+path strip_path_prefix_parts(const path& p, const size_t n);
 
 using temp_path = unique_ptr<path, void (*)(path*)>;
 
@@ -63,7 +63,7 @@ class recursive_repository_iterator: public repository_iterator {
   void skip_directories() {
     if (ignore_directories) {
       while (*this != end(*this)) {
-        auto direntry = (**this);
+        const auto direntry = (**this);
 
         if (!direntry.is_directory()) {
           break;
@@ -83,7 +83,7 @@ class recursive_repository_iterator: public repository_iterator {
   }
 
   recursive_repository_iterator& operator++() {
-    auto entry = repository_iterator::operator*();
+    const auto entry = repository_iterator::operator*();
 
     if (rec_it) {
       ++(*rec_it);
@@ -93,7 +93,7 @@ class recursive_repository_iterator: public repository_iterator {
       }
     } else {
       if (entry.is_directory()) {
-        auto temp_rec_it = shared_ptr<recursive_repository_iterator>(new recursive_repository_iterator(entry.path()));
+        const auto temp_rec_it = shared_ptr<recursive_repository_iterator>(new recursive_repository_iterator(entry.path()));
         if (*temp_rec_it != end(*temp_rec_it)) {
           rec_it = temp_rec_it;
         }
