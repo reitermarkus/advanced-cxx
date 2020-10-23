@@ -6,6 +6,8 @@
 
 #include "revision.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class Commit {
@@ -101,3 +103,5 @@ class Commit {
     return Commit(revision, parent_a, parent_b, date, message);
   }
 };
+
+}

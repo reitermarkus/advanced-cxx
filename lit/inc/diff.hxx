@@ -6,6 +6,8 @@
 #include "fs.hxx"
 #include "sub_process.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class Diff {
@@ -38,3 +40,5 @@ class Diff {
     return this->patch;
   }
 };
+
+}

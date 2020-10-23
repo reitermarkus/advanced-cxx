@@ -4,6 +4,8 @@
 
 #include "diff.hxx"
 
+namespace lit {
+
 Patch Patch::create(const fs::path& dir_a, const fs::path& dir_b, const fs::path& patch_file_path) {
   const auto file_statuses = dir_diff(dir_a, dir_b);
 
@@ -36,4 +38,6 @@ Patch Patch::create(const fs::path& dir_a, const fs::path& dir_b, const fs::path
   }
 
   return Patch(patch_file_path);
+}
+
 }

@@ -2,9 +2,10 @@
 
 #include "command.hxx"
 
-using namespace std;
-
+namespace lit {
 namespace command {
+
+using namespace std;
 
 class Help: public Command {
   public:
@@ -22,4 +23,5 @@ class Help: public Command {
   }
 };
 
+}
 }

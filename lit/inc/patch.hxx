@@ -9,6 +9,8 @@
 #include "fs.hxx"
 #include "sub_process.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class Patch {
@@ -44,3 +46,5 @@ class Patch {
 
   static Patch create(const fs::path& dir_a, const fs::path& dir_b, const fs::path& patch_file_path);
 };
+
+}

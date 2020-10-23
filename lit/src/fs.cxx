@@ -1,7 +1,7 @@
 #include "fs.hxx"
 
-#include <numeric>
 #include <iterator>
+#include <numeric>
 
 namespace fs {
 

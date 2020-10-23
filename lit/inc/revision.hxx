@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+namespace lit {
+
 using namespace std;
 
 class Revision {
@@ -53,3 +55,5 @@ class Revision {
 };
 
 ostream& operator<<(ostream& os, Revision revision);
+
+}

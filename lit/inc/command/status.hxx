@@ -9,9 +9,10 @@
 #include "fs.hxx"
 #include "repository.hxx"
 
-using namespace std;
-
+namespace lit {
 namespace command {
+
+using namespace std;
 
 class Status: public Command {
   public:
@@ -50,4 +51,5 @@ class Status: public Command {
   }
 };
 
+}
 }

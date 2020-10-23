@@ -6,6 +6,7 @@
 #include "command/help.hxx"
 
 using namespace std;
+using namespace lit;
 
 int main(int argc, char* argv[]) {
   if (argc == 1) {

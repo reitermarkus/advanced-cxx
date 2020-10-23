@@ -2,6 +2,8 @@
 
 #include "fs.hxx"
 
+namespace lit {
+
 unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path& dir_b) {
   unordered_map<string, FileStatus> file_statuses;
 
@@ -49,4 +51,6 @@ unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path
   }
 
   return file_statuses;
+}
+
 }

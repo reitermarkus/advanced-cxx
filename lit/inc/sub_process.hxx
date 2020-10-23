@@ -8,6 +8,8 @@
 
 #include "fs.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class SubProcess {
@@ -46,3 +48,5 @@ class SubProcess {
     return pair(output, WEXITSTATUS(status));
   }
 };
+
+}

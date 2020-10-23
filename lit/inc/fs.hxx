@@ -93,7 +93,8 @@ class recursive_repository_iterator: public repository_iterator {
       }
     } else {
       if (entry.is_directory()) {
-        const auto temp_rec_it = shared_ptr<recursive_repository_iterator>(new recursive_repository_iterator(entry.path()));
+        const auto temp_rec_it =
+            shared_ptr<recursive_repository_iterator>(new recursive_repository_iterator(entry.path()));
         if (*temp_rec_it != end(*temp_rec_it)) {
           rec_it = temp_rec_it;
         }

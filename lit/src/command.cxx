@@ -10,6 +10,8 @@
 #include "command/show.hxx"
 #include "command/status.hxx"
 
+namespace lit {
+
 vector<unique_ptr<Command>> Command::list() {
   vector<unique_ptr<Command>> commands;
 
@@ -41,4 +43,6 @@ void Command::print_usage(ostream& stream) {
     const auto description = command->description();
     stream << "  " << name << string(max_length - name.length(), ' ') << "  " << description << endl;
   }
+}
+
 }

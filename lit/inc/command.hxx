@@ -8,6 +8,8 @@
 
 #include "repository.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class Command {
@@ -80,3 +82,5 @@ class Command {
     return *repo_;
   }
 };
+
+}

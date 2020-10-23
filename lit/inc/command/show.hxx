@@ -6,9 +6,10 @@
 #include "repository.hxx"
 #include "revision.hxx"
 
-using namespace std;
-
+namespace lit {
 namespace command {
+
+using namespace std;
 
 class Show: public Command {
   public:
@@ -43,4 +44,5 @@ class Show: public Command {
   }
 };
 
+}
 }

@@ -14,6 +14,8 @@
 #include "patch.hxx"
 #include "revision.hxx"
 
+namespace lit {
+
 using namespace std;
 
 class Repository {
@@ -225,3 +227,5 @@ class Repository {
     return nullopt;
   }
 };
+
+}

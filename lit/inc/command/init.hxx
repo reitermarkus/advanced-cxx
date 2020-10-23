@@ -7,9 +7,10 @@
 #include "fs.hxx"
 #include "repository.hxx"
 
-using namespace std;
-
+namespace lit {
 namespace command {
+
+using namespace std;
 
 class Init: public Command {
   public:
@@ -33,4 +34,5 @@ class Init: public Command {
   }
 };
 
+}
 }
