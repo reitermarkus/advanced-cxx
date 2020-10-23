@@ -30,8 +30,7 @@ class Log: public Command {
     const auto revisions = latest_revision_n + 1;
 
     vector<shared_ptr<::lit::Commit>> commits(revisions, nullptr);
-    vector<vector<shared_ptr<::lit::Commit>>> children(revisions, vector<shared_ptr<::lit::Commit>>());
-    vector<vector<shared_ptr<::lit::Commit>>> parents(revisions, vector<shared_ptr<::lit::Commit>>());
+    vector<vector<size_t>> children(revisions, vector<size_t>());
 
     for (auto i = 0; i <= latest_revision_n; i++) {
       const auto commit = repo().commit(Revision(i));
@@ -42,83 +41,62 @@ class Log: public Command {
       commits[i] = shared_ptr<::lit::Commit>(new ::lit::Commit(commit));
 
       if (parent_a) {
-        children[parent_a->number()].push_back(commits[i]);
+        children[parent_a->number()].push_back(i);
       }
 
       if (parent_b) {
-        children[parent_b->number()].push_back(commits[i]);
-      }
-    }
-
-    for (auto i = 0; i <= latest_revision_n; i++) {
-      auto commit = commits[i];
-
-      const auto parent_a = commit->parent_a();
-      const auto parent_b = commit->parent_b();
-
-      if (parent_a) {
-        if (parent_b) {
-          if (children[parent_a->number()].size() > children[parent_b->number()].size()) {
-            parents[i].push_back(commits[parent_b->number()]);
-            parents[i].push_back(commits[parent_a->number()]);
-          } else {
-            parents[i].push_back(commits[parent_a->number()]);
-            parents[i].push_back(commits[parent_b->number()]);
-          }
-        } else {
-          parents[i].push_back(commits[parent_a->number()]);
-        }
+        children[parent_b->number()].push_back(i);
       }
     }
 
     vector<vector<size_t>> branches(revisions, vector<size_t>());
+    size_t max_branch_size = 0;
 
     for (auto i = 0; i <= latest_revision_n; i++) {
       const auto commit = commits[i];
 
       const auto parent_a = commit->parent_a();
-      const auto parent_b = commit->parent_b();
 
-      auto current_branch = 0;
+      if (i == 0) {
+        branches[i].push_back(i);
+      } else {
+        bool marked_self = false;
 
-      if (i > 0) {
-        while (current_branch < branches[i - 1].size()) {
-          const auto parent = branches[i - 1][current_branch];
-
-          if ((parent_a && parent == parent_a->number()) || (parent_b && parent == parent_b->number())) {
-            cout << i << ": break at " << current_branch << " = " << parent << endl;
-            current_branch++;
-            break;
+        for (const auto parent: branches[i - 1]) {
+          if (parent_a && parent == parent_a->number() && !marked_self) {
+            branches[i].push_back(i);
+            marked_self = true;
+          } else {
+            branches[i].push_back(parent);
           }
-
-          branches[i].push_back(parent);
-          current_branch++;
         }
       }
 
-      branches[i].push_back(i);
-
-      const auto children_count = children[i].size();
-      for (auto c = 0; (c + 1) < children_count; c++) {
+      for (auto c = 0; (c + 1) < children[i].size(); c++) {
         auto child = children[i][c];
 
-        auto right_parent = child->parent_b();
+        auto right_parent = commits[child]->parent_b();
         if (right_parent && i == right_parent->number()) {
-          cout << commit->id() << " is right parent of " << child->id() << endl;
           continue;
         }
 
         branches[i].push_back(i);
       }
 
-      if (i > 0) {
-        for (auto b = branches[i].size(); b < branches[i - 1].size(); b++) {
-          const auto parent = branches[i - 1][b];
-
-          branches[i].push_back(parent);
-        }
-      }
+      max_branch_size = max(max_branch_size, branches[i].size());
     }
+
+    // cout << "Branches: " << endl;
+    //
+    // for (auto i = latest_revision_n; i <= latest_revision_n; i--) {
+    //   cout << i << ": ";
+    //
+    //   for (auto& b: branches[i]) {
+    //     cout << b << " ";
+    //   }
+    //
+    //   cout << endl;
+    // }
 
     for (auto i = latest_revision_n; i <= latest_revision_n; i--) {
       auto commit = commits[i];
@@ -162,20 +140,29 @@ class Log: public Command {
             }
           } else {
             if (b > 0) {
-              cout << " ";
+              bool previous_is_next = (b + 1) < branches[i].size() ? branches[i][b - 1] == branches[i][b + 1] : false;
+
+              if (previous_is_next) {
+                cout << "─";
+              } else {
+                cout << " ";
+              }
             }
 
-            const auto max_children = accumulate(children[r].begin(), children[r].end(), 0, [](size_t acc, auto child) {
-              return max(acc, child->revision().number());
-            });
+            const auto max_child = accumulate(children[r].begin(), children[r].end(), 0,
+                                              [](size_t acc, auto child) { return max(acc, child); });
 
-            if (i <= max_children) {
+            if (i <= max_child) {
               cout << "│";
             } else {
               cout << " ";
             }
           }
         }
+      }
+
+      for (auto b = branches[i].size(); b < max_branch_size; b++) {
+        cout << "  ";
       }
 
       cout << " ";
@@ -187,18 +174,6 @@ class Log: public Command {
       }
 
       cout << commit->id() << ": " << commit->message() << endl;
-    }
-
-    cout << "Branches: " << endl;
-
-    for (auto i = latest_revision_n; i <= latest_revision_n; i--) {
-      cout << i << ": ";
-
-      for (auto& b: branches[i]) {
-        cout << b << " ";
-      }
-
-      cout << endl;
     }
 
     return 0;
