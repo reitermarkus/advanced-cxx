@@ -31,7 +31,7 @@ class LogCommand: public Command {
     vector<shared_ptr<Commit>> commits(revisions, nullptr);
     vector<vector<size_t>> children(revisions, vector<size_t>());
 
-    for (auto i = 0; i <= latest_revision_n; i++) {
+    for (size_t i = 0; i <= latest_revision_n; i++) {
       const auto commit = repo().commit(Revision(i));
 
       const auto parent_a = commit.parent_a();
@@ -51,7 +51,7 @@ class LogCommand: public Command {
     vector<vector<size_t>> branches(revisions, vector<size_t>());
     size_t max_branch_size = 0;
 
-    for (auto i = 0; i <= latest_revision_n; i++) {
+    for (size_t i = 0; i <= latest_revision_n; i++) {
       const auto commit = commits[i];
 
       const auto parent_a = commit->parent_a();
@@ -61,7 +61,7 @@ class LogCommand: public Command {
       } else {
         bool marked_self = false;
 
-        for (auto p = 0; p < branches[i - 1].size(); p++) {
+        for (size_t p = 0; p < branches[i - 1].size(); p++) {
           const auto parent = branches[i - 1][p];
 
           if (parent_a && parent == parent_a->number() && !marked_self) {
@@ -73,10 +73,10 @@ class LogCommand: public Command {
         }
       }
 
-      for (auto c = 0; (c + 1) < children[i].size(); c++) {
-        auto child = children[i][c];
+      for (size_t c = 0; (c + 1) < children[i].size(); c++) {
+        const auto child = children[i][c];
 
-        auto right_parent = commits[child]->parent_b();
+        const auto right_parent = commits[child]->parent_b();
         if (right_parent && i == right_parent->number()) {
           continue;
         }
@@ -99,16 +99,16 @@ class LogCommand: public Command {
     //   cout << endl;
     // }
 
-    for (auto i = latest_revision_n; i <= latest_revision_n; i--) {
-      auto commit = commits[i];
+    for (size_t i = latest_revision_n; i <= latest_revision_n; i--) {
+      const auto commit = commits[i];
 
-      auto parent_b = commit->parent_b();
+      const auto parent_b = commit->parent_b();
 
       bool printed_self = false;
       bool printed_right_parent = false;
 
-      for (auto b = 0; b < branches[i].size(); b++) {
-        auto r = branches[i][b];
+      for (size_t b = 0; b < branches[i].size(); b++) {
+        const auto r = branches[i][b];
 
         if (r == i) {
           if (printed_self) {
@@ -122,7 +122,7 @@ class LogCommand: public Command {
             printed_self = true;
           }
         } else {
-          bool is_right_parent = parent_b && parent_b->number() == r;
+          const bool is_right_parent = parent_b && parent_b->number() == r;
 
           if (is_right_parent) {
             if (printed_right_parent) {
@@ -168,8 +168,8 @@ class LogCommand: public Command {
               }
             }
 
-            const auto max_child = accumulate(children[r].begin(), children[r].end(), 0,
-                                              [](size_t acc, auto child) { return max(acc, child); });
+            const size_t max_child = accumulate(children[r].begin(), children[r].end(), 0,
+                                              [](size_t acc, size_t child) { return max(acc, child); });
 
             if (i <= max_child) {
               cout << "│";
@@ -182,7 +182,7 @@ class LogCommand: public Command {
         }
       }
 
-      for (auto b = branches[i].size(); b < max_branch_size; b++) {
+      for (size_t b = branches[i].size(); b < max_branch_size; b++) {
         cout << "  ";
       }
 
