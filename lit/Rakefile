@@ -17,11 +17,6 @@ task :format do
   sh 'clang-format', '-i', *Dir.glob('**/*.{c,h}xx')
 end
 
-task :lint do
-  sh 'rubocop'
-  sh 'clang-format', *Dir.glob('**/*.{c,h}xx')
-end
-
 task :clean do
   rm_rf BUILD_DIR
 end
