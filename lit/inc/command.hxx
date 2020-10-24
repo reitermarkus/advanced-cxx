@@ -16,43 +16,47 @@ using namespace std;
 class Command {
   optional<Repository> repo_;
 
-  optional<string> check_arguments(const vector<string>& arguments) {
+  [[nodiscard]] optional<string> check_arguments(const vector<string>& arguments) const noexcept {
     if (min_arguments() == max_arguments()) {
       if (min_arguments() != arguments.size()) {
         if (min_arguments() == 0) {
           return optional("This command does not support arguments.");
-        } else {
-          return optional("This command only supports exactly " + to_string(min_arguments()) + " arguments.");
         }
+
+        return optional("This command only supports exactly " + to_string(min_arguments()) + " arguments.");
       }
     } else if (arguments.size() < min_arguments()) {
       if (min_arguments() == 1) {
         return optional("This command supports at least one argument.");
-      } else {
-        return optional("This command supports at least " + to_string(min_arguments()) + " arguments.");
       }
+
+      return optional("This command supports at least " + to_string(min_arguments()) + " arguments.");
     } else if (arguments.size() > max_arguments()) {
       if (max_arguments() == 1) {
         return optional("This command supports at most one argument.");
-      } else {
-        return optional("This command supports at most " + to_string(max_arguments()) + " arguments.");
       }
+
+      return optional("This command supports at most " + to_string(max_arguments()) + " arguments.");
     }
 
     return nullopt;
   }
 
   public:
-  Command() {}
-  virtual ~Command() {}
+  Command() noexcept = default;
+  Command(Command&&) = default;
+  Command(const Command&) = default;
+  virtual ~Command() = default;
+  Command& operator=(const Command&) = default;
+  Command& operator=(Command&&) = default;
 
-  virtual string description() const = 0;
+  [[nodiscard]] virtual string description() const = 0;
 
-  virtual size_t min_arguments() const {
+  [[nodiscard]] virtual size_t min_arguments() const {
     return 0;
   };
 
-  virtual size_t max_arguments() const {
+  [[nodiscard]] virtual size_t max_arguments() const {
     return 0;
   };
 
@@ -97,7 +101,7 @@ class Command {
   }
 };
 
-}
+} // namespace lit
 
 #include "command/checkout.hxx"
 #include "command/commit.hxx"
@@ -113,18 +117,18 @@ namespace lit {
 map<string, unique_ptr<Command>> Command::list() {
   map<string, unique_ptr<Command>> commands;
 
-  commands.emplace("checkout",  new CheckoutCommand());
-  commands.emplace("commit",    new CommitCommand());
-  commands.emplace("help",      new HelpCommand());
-  commands.emplace("init",      new InitCommand());
-  commands.emplace("log",       new LogCommand());
-  commands.emplace("merge",     new MergeCommand());
-  commands.emplace("show",      new ShowCommand());
-  commands.emplace("status",    new StatusCommand());
+  commands.emplace("checkout", new CheckoutCommand());
+  commands.emplace("commit", new CommitCommand());
+  commands.emplace("help", new HelpCommand());
+  commands.emplace("init", new InitCommand());
+  commands.emplace("log", new LogCommand());
+  commands.emplace("merge", new MergeCommand());
+  commands.emplace("show", new ShowCommand());
+  commands.emplace("status", new StatusCommand());
 
   return commands;
 }
 
-}
+} // namespace lit
 
 #endif

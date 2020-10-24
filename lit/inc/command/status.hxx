@@ -18,13 +18,13 @@ using namespace std;
 
 class StatusCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Show the working tree status.";
   }
 
-  int run_inner(vector<string>&& arguments) override {
+  int run_inner(vector<string>&& /* arguments */) override {
     for (const auto& entry: repo().status()) {
-      const auto [path, status] = entry;
+      const auto& [path, status] = entry;
       cout << to_char(status) << "  " << path << endl;
     }
 
@@ -32,4 +32,4 @@ class StatusCommand: public Command {
   }
 };
 
-}
+} // namespace lit

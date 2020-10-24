@@ -15,10 +15,10 @@ using namespace std;
 
 class ShowCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Inspect the given commit.";
   }
-  size_t max_arguments() const override {
+  [[nodiscard]] size_t max_arguments() const override {
     return 1;
   }
 
@@ -43,4 +43,4 @@ class ShowCommand: public Command {
   }
 };
 
-}
+} // namespace lit

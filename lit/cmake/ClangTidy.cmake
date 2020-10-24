@@ -10,4 +10,4 @@ list(APPEND CLANG_TIDY_PATHS "${BREW_LLVM_PREFIX}/bin")
 endif()
 
 find_program(CLANG_TIDY clang-tidy PATHS ${CLANG_TIDY_PATHS})
-set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY};-header-filter=.;-checks=*;-warnings-as-errors=*;-fix")
+set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}")

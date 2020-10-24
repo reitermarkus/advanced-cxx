@@ -30,9 +30,9 @@ class Patch {
   }
 
   public:
-  Patch(fs::path path): path_(path) {}
+  explicit Patch(fs::path path): path_(move(path)) {}
 
-  const fs::path& path() const {
+  [[nodiscard]] const fs::path& path() const {
     return this->path_;
   }
 
@@ -49,8 +49,8 @@ class Patch {
 
     ofstream patch_file(patch_file_path);
 
-    for (auto& entry: file_statuses) {
-      const auto [path, status] = entry;
+    for (const auto& entry: file_statuses) {
+      const auto& [path, status] = entry;
 
       const auto path_a = dir_a / path;
       auto label_a = "a/" + path;
@@ -79,4 +79,4 @@ class Patch {
   }
 };
 
-}
+} // namespace lit

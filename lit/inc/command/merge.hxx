@@ -18,13 +18,13 @@ using namespace std;
 
 class MergeCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Initiate a merge with the currently checked out commit and the specified commit.";
   }
-  size_t min_arguments() const override {
+  [[nodiscard]] size_t min_arguments() const override {
     return 1;
   }
-  size_t max_arguments() const override {
+  [[nodiscard]] size_t max_arguments() const override {
     return 1;
   }
 
@@ -85,7 +85,7 @@ class MergeCommand: public Command {
     };
 
     for (const auto& entry: file_statuses_merge) {
-      const auto [path, status] = entry;
+      const auto& [path, status] = entry;
 
       if (file_statuses_current.find(path) != file_statuses_current.end()) {
         file_statuses_current.erase(path);
@@ -97,7 +97,7 @@ class MergeCommand: public Command {
     }
 
     for (const auto& entry: file_statuses_current) {
-      const auto [path, status] = entry;
+      const auto& [path, status] = entry;
 
       move_changed_files(repo_dir, path, status);
     }
@@ -136,4 +136,4 @@ class MergeCommand: public Command {
   }
 };
 
-}
+} // namespace lit

@@ -32,13 +32,13 @@ class Diff {
   }
   Diff(const fs::path& a, const fs::path& b): Diff(a, b, string(a), string(b)) {}
 
-  bool is_changed() const {
+  [[nodiscard]] bool is_changed() const {
     return this->is_changed_;
   }
 
-  const string& output() const {
+  [[nodiscard]] const string& output() const {
     return this->patch;
   }
 };
 
-}
+} // namespace lit

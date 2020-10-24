@@ -21,4 +21,4 @@ char to_char(const FileStatus& file_status) {
   }
 }
 
-}
+} // namespace lit

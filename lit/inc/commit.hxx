@@ -20,31 +20,31 @@ class Commit {
   public:
   Commit(Revision revision, optional<Revision> parent_a, optional<Revision> parent_b,
          chrono::time_point<chrono::system_clock> date, string message)
-      : revision_(revision), parent_a_(parent_a), parent_b_(parent_b), date_(date), message_(message) {}
+      : revision_(revision), parent_a_(parent_a), parent_b_(parent_b), date_(date), message_(move(message)) {}
   Commit(Revision revision, optional<Revision> parent, chrono::time_point<chrono::system_clock> date, string message)
-      : Commit(revision, parent, nullopt, date, message) {}
+      : Commit(revision, parent, nullopt, date, move(message)) {}
 
-  string id() const {
+  [[nodiscard]] string id() const {
     return this->revision_.id();
   }
 
-  Revision revision() const {
+  [[nodiscard]] Revision revision() const {
     return this->revision_;
   }
 
-  optional<Revision> parent_a() const {
+  [[nodiscard]] optional<Revision> parent_a() const {
     return this->parent_a_;
   }
 
-  optional<Revision> parent_b() const {
+  [[nodiscard]] optional<Revision> parent_b() const {
     return this->parent_b_;
   }
 
-  chrono::time_point<chrono::system_clock> date() const {
+  [[nodiscard]] chrono::time_point<chrono::system_clock> date() const {
     return this->date_;
   }
 
-  string message() const {
+  [[nodiscard]] string message() const {
     return this->message_;
   }
 
@@ -104,4 +104,4 @@ class Commit {
   }
 };
 
-}
+} // namespace lit

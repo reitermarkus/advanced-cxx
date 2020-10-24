@@ -10,7 +10,7 @@ namespace fs {
 using namespace std;
 using namespace std::filesystem;
 
-size_t count_path_parts(const path& p) {
+inline size_t count_path_parts(const path& p) {
   return distance(p.begin(), p.end());
 }
 
@@ -19,7 +19,7 @@ path strip_path_prefix_parts(const path& p, const size_t n) {
   advance(begin, n);
   path init = *begin;
   advance(begin, 1);
-  return reduce(begin, p.end(), init, divides<path>());
+  return reduce(begin, p.end(), init, divides<>());
 }
 
 using temp_path = unique_ptr<path, void (*)(path*)>;
@@ -30,17 +30,22 @@ temp_path create_temp_directory() {
   return temp_path(new path(mkdtemp(&pattern[0])), [](fs::path* path) { fs::remove_all(*path); });
 }
 
-inline bool is_lit(const path& p) {
+bool is_lit(const path& p) {
   return p.filename() == ".lit";
 }
 
 /// Iterator for iterating over all top-level directories and files in a repository.
 class repository_iterator: public directory_iterator {
   public:
-  repository_iterator(): directory_iterator() {}
-  repository_iterator(const path& p): directory_iterator(p) {
+  repository_iterator(repository_iterator&&) = default;
+  repository_iterator(const repository_iterator&) = default;
+  repository_iterator() noexcept = default;
+  explicit repository_iterator(const path& p): directory_iterator(p) {
     skip_if_lit();
   }
+  ~repository_iterator() = default;
+  repository_iterator& operator=(const repository_iterator&) = default;
+  repository_iterator& operator=(repository_iterator&&) = default;
 
   void skip_if_lit() {
     if (*this != end(*this) && is_lit((**this).path())) {
@@ -57,7 +62,7 @@ class repository_iterator: public directory_iterator {
   }
 
   bool operator==(const repository_iterator& other) const {
-    return (const directory_iterator&)(*this) == (const directory_iterator&)(other);
+    return static_cast<const directory_iterator&>(*this) == static_cast<const directory_iterator&>(other);
   }
 
   bool operator!=(const repository_iterator& other) const {
@@ -65,11 +70,12 @@ class repository_iterator: public directory_iterator {
   }
 };
 
-repository_iterator begin(repository_iterator it) noexcept {
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+inline repository_iterator begin(repository_iterator it) noexcept {
   return it;
 }
 
-repository_iterator end(const repository_iterator&) noexcept {
+inline repository_iterator end(const repository_iterator& /* it */) noexcept {
   return repository_iterator();
 }
 
@@ -84,20 +90,24 @@ class recursive_repository_iterator: public repository_iterator {
 
         if (!direntry.is_directory()) {
           break;
-        } else {
-          ++(*this);
         }
+
+        ++(*this);
       }
     }
   }
 
   public:
   recursive_repository_iterator(const recursive_repository_iterator&) = default;
-  recursive_repository_iterator() noexcept {}
-  recursive_repository_iterator(const path& p, bool ignore_directories = true): repository_iterator(p) {
+  recursive_repository_iterator(recursive_repository_iterator&&) = default;
+  recursive_repository_iterator() noexcept = default;
+  explicit recursive_repository_iterator(const path& p, bool ignore_directories = true): repository_iterator(p) {
     this->ignore_directories = ignore_directories;
     skip_directories();
   }
+  ~recursive_repository_iterator() = default;
+  recursive_repository_iterator& operator=(const recursive_repository_iterator&) = default;
+  recursive_repository_iterator& operator=(recursive_repository_iterator&&) = default;
 
   recursive_repository_iterator& operator++() {
     const auto entry = repository_iterator::operator*();
@@ -140,7 +150,7 @@ class recursive_repository_iterator: public repository_iterator {
       return false;
     }
 
-    return (const repository_iterator&)(*this) == (const repository_iterator&)(other);
+    return static_cast<const repository_iterator&>(*this) == static_cast<const repository_iterator&>(other);
   }
 
   bool operator!=(const recursive_repository_iterator& other) const {
@@ -148,12 +158,13 @@ class recursive_repository_iterator: public repository_iterator {
   }
 };
 
-recursive_repository_iterator begin(recursive_repository_iterator it) noexcept {
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+inline recursive_repository_iterator begin(recursive_repository_iterator it) noexcept {
   return it;
 }
 
-recursive_repository_iterator end(const recursive_repository_iterator&) noexcept {
+inline recursive_repository_iterator end(const recursive_repository_iterator& /* it */) noexcept {
   return recursive_repository_iterator();
 }
-}
-}
+} // namespace fs
+} // namespace lit

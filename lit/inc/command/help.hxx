@@ -10,15 +10,15 @@ using namespace std;
 
 class HelpCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Display help information about Lit.";
   }
 
-  int run_inner(vector<string>&& arguments) override {
+  int run_inner(vector<string>&& /* arguments */) override {
     Command::print_usage(cout);
 
     return 0;
   }
 };
 
-}
+} // namespace lit

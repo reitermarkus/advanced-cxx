@@ -2,12 +2,12 @@
 
 #include <cassert>
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
 
 #ifndef LIT_COMMAND_HXX
 #include "command.hxx"
@@ -27,13 +27,13 @@ using namespace std;
 
 class CommitCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Record changes to the repository.";
   }
-  size_t min_arguments() const override {
+  [[nodiscard]] size_t min_arguments() const override {
     return 1;
   }
-  size_t max_arguments() const override {
+  [[nodiscard]] size_t max_arguments() const override {
     return 1;
   }
 
@@ -52,4 +52,4 @@ class CommitCommand: public Command {
   }
 };
 
-}
+} // namespace lit

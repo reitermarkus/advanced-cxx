@@ -15,7 +15,7 @@ unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path
   const auto dir_b_parts = fs::count_path_parts(dir_b);
 
   const auto status_b = [&](const fs::directory_entry& entry) {
-    const auto path = entry.path();
+    const auto& path = entry.path();
     const auto new_path = fs::strip_path_prefix_parts(path, dir_b_parts);
 
     const auto comparison_path = dir_a / new_path;
@@ -32,12 +32,12 @@ unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path
     }
   };
 
-  for (auto& entry: fs::recursive_repository_iterator(dir_b)) {
+  for (const auto& entry: fs::recursive_repository_iterator(dir_b)) {
     status_b(entry);
   }
 
   const auto status_a = [&](const fs::directory_entry& entry) {
-    const auto path = entry.path();
+    const auto& path = entry.path();
     const auto new_path = fs::strip_path_prefix_parts(path, dir_a_parts);
 
     if (file_statuses.find(new_path) != file_statuses.end()) {
@@ -50,11 +50,11 @@ unordered_map<string, FileStatus> dir_diff(const fs::path& dir_a, const fs::path
     }
   };
 
-  for (auto& entry: fs::recursive_repository_iterator(dir_a)) {
+  for (const auto& entry: fs::recursive_repository_iterator(dir_a)) {
     status_a(entry);
   }
 
   return file_statuses;
 }
 
-}
+} // namespace lit

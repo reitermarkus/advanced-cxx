@@ -16,11 +16,11 @@ using namespace std;
 
 class LogCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Display a graph of all commits.";
   }
 
-  int run_inner(vector<string>&& arguments) override {
+  int run_inner(vector<string>&& /* arguments */) override {
     const auto latest_revision = repo().latest_revision().value();
     const auto current_revision = repo().current_revision().value();
 
@@ -201,4 +201,4 @@ class LogCommand: public Command {
   }
 };
 
-}
+} // namespace lit

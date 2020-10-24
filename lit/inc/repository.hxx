@@ -53,7 +53,7 @@ class Repository {
   }
 
   public:
-  Repository(fs::path path = fs::current_path()) {
+  explicit Repository(fs::path&& path = fs::current_path()) {
     this->path = path;
   }
 
@@ -80,10 +80,7 @@ class Repository {
 
   unordered_map<string, FileStatus> status() {
     const auto temp_repo_dir = checkout_temp_directory(current_revision());
-
-    const auto file_statuses = dir_diff(*temp_repo_dir, dir());
-
-    return file_statuses;
+    return dir_diff(*temp_repo_dir, dir());
   }
 
   void write_current_revision(const Revision& revision) {
@@ -118,9 +115,9 @@ class Repository {
 
     if (rev) {
       return Revision(rev.value().number() + 1);
-    } else {
-      return Revision(0);
     }
+
+    return Revision(0);
   }
 
   Commit commit(const Revision& revision) {
@@ -128,7 +125,7 @@ class Repository {
     return Commit::deserialize(meta);
   }
 
-  void create_commit(Commit commit, optional<Revision> current_revision) {
+  void create_commit(const Commit& commit, optional<Revision> current_revision) {
     const auto temp_dir = fs::create_temp_directory();
 
     const auto meta_file_path = *temp_dir / commit.revision().meta_filename();
@@ -179,7 +176,7 @@ class Repository {
     const auto temp_dir_parts = fs::count_path_parts(*temp_repo_dir);
 
     for (const auto& entry: fs::repository_iterator(*temp_repo_dir)) {
-      const auto path = entry.path();
+      const auto& path = entry.path();
       const auto relative_path = fs::strip_path_prefix_parts(path, temp_dir_parts);
 
       fs::rename(path, repo_dir / relative_path);
@@ -191,9 +188,9 @@ class Repository {
   optional<Revision> merge_base_opt(optional<Revision> revision_a, optional<Revision> revision_b) {
     if (revision_a && revision_b) {
       return merge_base(revision_a.value(), revision_b.value());
-    } else {
-      return revision_a;
     }
+
+    return revision_a;
   }
 
   optional<Revision> merge_base(const Revision& revision_a, const Revision& revision_b) {
@@ -228,4 +225,4 @@ class Repository {
   }
 };
 
-}
+} // namespace lit

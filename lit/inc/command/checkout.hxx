@@ -19,10 +19,10 @@ using namespace std;
 
 class CheckoutCommand: public Command {
   public:
-  string description() const override {
+  [[nodiscard]] string description() const override {
     return "Reset the repository to the given commit's state.";
   }
-  size_t max_arguments() const override {
+  [[nodiscard]] size_t max_arguments() const override {
     return 1;
   }
 
@@ -35,4 +35,4 @@ class CheckoutCommand: public Command {
   }
 };
 
-}
+} // namespace lit
