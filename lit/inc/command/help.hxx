@@ -10,9 +10,6 @@ using namespace std;
 
 class HelpCommand: public Command {
   public:
-  string name() const override {
-    return "help";
-  }
   string description() const override {
     return "Display help information about Lit.";
   }

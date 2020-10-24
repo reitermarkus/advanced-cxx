@@ -19,9 +19,6 @@ using namespace std;
 
 class CheckoutCommand: public Command {
   public:
-  string name() const override {
-    return "checkout";
-  }
   string description() const override {
     return "Reset the repository to the given commit's state.";
   }

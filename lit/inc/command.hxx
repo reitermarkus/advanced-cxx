@@ -2,10 +2,10 @@
 #define LIT_COMMAND_HXX
 
 #include <iostream>
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
-#include <vector>
 
 #include "repository.hxx"
 
@@ -46,7 +46,6 @@ class Command {
   Command() {}
   virtual ~Command() {}
 
-  virtual string name() const = 0;
   virtual string description() const = 0;
 
   virtual size_t min_arguments() const {
@@ -71,21 +70,19 @@ class Command {
     return run_inner(move(arguments));
   }
 
-  static vector<unique_ptr<Command>> list();
+  static map<string, unique_ptr<Command>> list();
 
   static void print_usage(ostream& stream) {
-    const auto commands = Command::list();
+    auto commands = Command::list();
 
-    const auto max_name_length = [](size_t acc, const unique_ptr<Command>& command) {
-      return max(acc, command->name().length());
-    };
+    const auto max_name_length = [](size_t acc, auto& pair) { return max(acc, pair.first.length()); };
     const auto max_length = accumulate(commands.begin(), commands.end(), 0, max_name_length);
 
     stream << "Usage: lit <command> [<args>]" << endl;
     stream << endl;
     stream << "Commands:" << endl;
-    for (const auto& command: commands) {
-      const auto name = command->name();
+    for (const auto& pair: commands) {
+      const auto& [name, command] = pair;
       const auto description = command->description();
       stream << "  " << name << string(max_length - name.length(), ' ') << "  " << description << endl;
     }
@@ -113,17 +110,17 @@ class Command {
 
 namespace lit {
 
-vector<unique_ptr<Command>> Command::list() {
-  vector<unique_ptr<Command>> commands;
+map<string, unique_ptr<Command>> Command::list() {
+  map<string, unique_ptr<Command>> commands;
 
-  commands.emplace_back(new CheckoutCommand());
-  commands.emplace_back(new CommitCommand());
-  commands.emplace_back(new HelpCommand());
-  commands.emplace_back(new InitCommand());
-  commands.emplace_back(new LogCommand());
-  commands.emplace_back(new MergeCommand());
-  commands.emplace_back(new ShowCommand());
-  commands.emplace_back(new StatusCommand());
+  commands.emplace("checkout",  new CheckoutCommand());
+  commands.emplace("commit",    new CommitCommand());
+  commands.emplace("help",      new HelpCommand());
+  commands.emplace("init",      new InitCommand());
+  commands.emplace("log",       new LogCommand());
+  commands.emplace("merge",     new MergeCommand());
+  commands.emplace("show",      new ShowCommand());
+  commands.emplace("status",    new StatusCommand());
 
   return commands;
 }

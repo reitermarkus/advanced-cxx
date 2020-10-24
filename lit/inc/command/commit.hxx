@@ -27,9 +27,6 @@ using namespace std;
 
 class CommitCommand: public Command {
   public:
-  string name() const override {
-    return "commit";
-  }
   string description() const override {
     return "Record changes to the repository.";
   }

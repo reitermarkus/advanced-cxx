@@ -16,18 +16,15 @@ int main(int argc, char* argv[]) {
   }
 
   const auto command_name = string(argv[1]);
+  auto commands = Command::list();
 
-  const auto commands = Command::list();
-
-  for (const auto& command: commands) {
-    if (command->name() == command_name) {
-      vector<string> arguments(argv + 2, argv + argc);
-      return command->run(move(arguments));
-    }
+  if (commands.find(command_name) == commands.end()) {
+    cerr << "Unknown subcommand: " << command_name << endl;
+    cerr << endl;
+    Command::print_usage(cerr);
+    return 1;
   }
 
-  cerr << "Unknown subcommand: " << command_name << endl;
-  cerr << endl;
-  Command::print_usage(cerr);
-  return 1;
+  vector<string> arguments(argv + 2, argv + argc);
+  return commands[command_name]->run(move(arguments));
 }

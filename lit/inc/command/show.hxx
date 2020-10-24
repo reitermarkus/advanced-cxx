@@ -15,9 +15,6 @@ using namespace std;
 
 class ShowCommand: public Command {
   public:
-  string name() const override {
-    return "show";
-  }
   string description() const override {
     return "Inspect the given commit.";
   }

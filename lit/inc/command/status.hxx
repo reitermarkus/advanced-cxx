@@ -18,9 +18,6 @@ using namespace std;
 
 class StatusCommand: public Command {
   public:
-  string name() const override {
-    return "status";
-  }
   string description() const override {
     return "Show the working tree status.";
   }

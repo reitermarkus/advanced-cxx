@@ -16,9 +16,6 @@ using namespace std;
 
 class InitCommand: public Command {
   public:
-  string name() const override {
-    return "init";
-  }
   string description() const override {
     return "Create an empty Lit repository or reinitialize an existing one";
   }

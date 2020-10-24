@@ -16,9 +16,6 @@ using namespace std;
 
 class LogCommand: public Command {
   public:
-  string name() const override {
-    return "log";
-  }
   string description() const override {
     return "Display a graph of all commits.";
   }
