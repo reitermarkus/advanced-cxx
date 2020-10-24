@@ -40,7 +40,7 @@ class LogCommand: public Command {
       const auto parent_a = commit.parent_a();
       const auto parent_b = commit.parent_b();
 
-      commits[i] = commit;
+      commits.push_back(commit);
 
       if (parent_a) {
         children[parent_a->number()].push_back(i);
@@ -131,7 +131,7 @@ class LogCommand: public Command {
             if (printed_right_parent) {
               cout << " │";
             } else {
-              size_t right_parent_children = children[parent_b->number()].size();
+              const size_t right_parent_children = children[parent_b->number()].size();
 
               cout << "─";
               if (right_parent_children == 1 || i == latest_revision_n) {
@@ -154,7 +154,7 @@ class LogCommand: public Command {
                   if (left == i && left == right) {
                     i_crosses_current = true;
                   } else if (parent_b) {
-                    for (auto b2 = b; b2 < branches[i].size(); b2++) {
+                    for (size_t b2 = b; b2 < branches[i].size(); b2++) {
                       if (branches[i][b2] == parent_b->number()) {
                         i_crosses_current = true;
                         break;
@@ -164,7 +164,7 @@ class LogCommand: public Command {
                 }
               }
 
-              if (i_crosses_current) {
+              if (printed_self && i_crosses_current) {
                 cout << "─";
               } else {
                 cout << " ";
@@ -176,7 +176,7 @@ class LogCommand: public Command {
 
             if (i <= max_child) {
               cout << "│";
-            } else if (i_crosses_current) {
+            } else if (printed_self && i_crosses_current) {
               cout << "─";
             } else {
               cout << " ";
