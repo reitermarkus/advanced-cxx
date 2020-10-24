@@ -4,7 +4,10 @@
 #include <iostream>
 #include <unordered_set>
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
 #include "dir_diff.hxx"
 #include "repository.hxx"
 #include "revision.hxx"

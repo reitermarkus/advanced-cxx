@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
 
 namespace lit {
 

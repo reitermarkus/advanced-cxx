@@ -3,7 +3,10 @@
 #include <filesystem>
 #include <iostream>
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
 #include "fs.hxx"
 #include "repository.hxx"
 

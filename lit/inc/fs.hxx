@@ -1,7 +1,7 @@
 #pragma once
 
 #include <filesystem>
-#include <optional>
+#include <numeric>
 #include <unistd.h>
 
 namespace lit {
@@ -10,13 +10,25 @@ namespace fs {
 using namespace std;
 using namespace std::filesystem;
 
-size_t count_path_parts(const path& p);
+size_t count_path_parts(const path& p) {
+  return distance(p.begin(), p.end());
+}
 
-path strip_path_prefix_parts(const path& p, const size_t n);
+path strip_path_prefix_parts(const path& p, const size_t n) {
+  auto begin = p.begin();
+  advance(begin, n);
+  path init = *begin;
+  advance(begin, 1);
+  return reduce(begin, p.end(), init, divides<path>());
+}
 
 using temp_path = unique_ptr<path, void (*)(path*)>;
 
-temp_path create_temp_directory();
+temp_path create_temp_directory() {
+  auto pattern = string(temp_directory_path() / "lit.XXXXXX");
+
+  return temp_path(new path(mkdtemp(&pattern[0])), [](fs::path* path) { fs::remove_all(*path); });
+}
 
 inline bool is_lit(const path& p) {
   return p.filename() == ".lit";
@@ -53,8 +65,13 @@ class repository_iterator: public directory_iterator {
   }
 };
 
-repository_iterator begin(repository_iterator it) noexcept;
-repository_iterator end(const repository_iterator&) noexcept;
+repository_iterator begin(repository_iterator it) noexcept {
+  return it;
+}
+
+repository_iterator end(const repository_iterator&) noexcept {
+  return repository_iterator();
+}
 
 class recursive_repository_iterator: public repository_iterator {
   bool ignore_directories = true;
@@ -131,8 +148,12 @@ class recursive_repository_iterator: public repository_iterator {
   }
 };
 
-recursive_repository_iterator begin(recursive_repository_iterator it) noexcept;
-recursive_repository_iterator end(const recursive_repository_iterator&) noexcept;
+recursive_repository_iterator begin(recursive_repository_iterator it) noexcept {
+  return it;
+}
 
+recursive_repository_iterator end(const recursive_repository_iterator&) noexcept {
+  return recursive_repository_iterator();
+}
 }
 }

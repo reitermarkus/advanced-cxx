@@ -4,7 +4,10 @@
 #include <functional>
 #include <numeric>
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
 #include "repository.hxx"
 
 namespace lit {

@@ -8,13 +8,5 @@ include(BuildType)
 include(CxxStandard)
 
 add_executable(lit)
-target_sources(lit
-  PRIVATE
-    src/main.cxx
-    src/command.cxx
-    src/fs.cxx
-    src/patch.cxx
-    src/dir_diff.cxx
-    src/revision.cxx
-)
+target_sources(lit PRIVATE src/main.cxx)
 target_include_directories(lit PUBLIC "${CMAKE_CURRENT_LIST_DIR}/inc")

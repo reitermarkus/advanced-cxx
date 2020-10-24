@@ -9,8 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../commit.hxx"
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
+#include "../commit.hxx"
 #include "diff.hxx"
 #include "dir_diff.hxx"
 #include "fs.hxx"

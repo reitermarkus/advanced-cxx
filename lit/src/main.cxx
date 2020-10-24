@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "command.hxx"
-#include "command/help.hxx"
 
 using namespace std;
 using namespace lit;

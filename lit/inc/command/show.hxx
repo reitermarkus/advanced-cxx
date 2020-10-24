@@ -2,7 +2,10 @@
 
 #include <fstream>
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
 #include "repository.hxx"
 #include "revision.hxx"
 

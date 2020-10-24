@@ -54,6 +54,4 @@ class Revision {
   }
 };
 
-ostream& operator<<(ostream& os, Revision revision);
-
 }

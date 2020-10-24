@@ -2,7 +2,10 @@
 
 #include <deque>
 
+#ifndef LIT_COMMAND_HXX
 #include "command.hxx"
+#endif
+
 #include "diff.hxx"
 #include "dir_diff.hxx"
 #include "fs.hxx"
