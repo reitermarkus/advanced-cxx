@@ -16,6 +16,8 @@ char to_char(const FileStatus& file_status) {
       return 'M';
     case Deleted:
       return 'D';
+    default:
+      __builtin_unreachable();
   }
 }
 
