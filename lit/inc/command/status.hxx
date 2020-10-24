@@ -26,27 +26,9 @@ class StatusCommand: public Command {
   }
 
   int run_inner(vector<string>&& arguments) override {
-    const auto file_statuses = repo().status();
-
-    for (const auto& entry: file_statuses) {
+    for (const auto& entry: repo().status()) {
       const auto [path, status] = entry;
-
-      switch (status) {
-        case Added: {
-          cout << "A";
-          break;
-        }
-        case Modified: {
-          cout << "M";
-          break;
-        }
-        case Deleted: {
-          cout << "D";
-          break;
-        }
-      }
-
-      cout << "  " << path << endl;
+      cout << to_char(status) << "  " << path << endl;
     }
 
     return 0;
