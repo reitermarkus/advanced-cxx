@@ -8,10 +8,10 @@
 rake build
 ```
 
-## Runing
+## Test
 
 ```shell
-rake run
+rake test
 ```
 
 ## Known Issues

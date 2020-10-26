@@ -13,4 +13,4 @@ Checks: >
   -cert-env33-c,
 HeaderFilterRegex: .*
 AnalyzeTemporaryDtors: false
-FormatStyle:     none
+FormatStyle: none
