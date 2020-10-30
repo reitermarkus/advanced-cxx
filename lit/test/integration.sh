@@ -2,6 +2,17 @@
 
 set -euo pipefail
 
+if which valgrind &>/dev/null; then
+  lit() {
+    valgrind \
+      --leak-check=full \
+      --show-leak-kinds=all \
+      --track-origins=yes \
+      --verbose \
+      --error-exitcode=88 -- lit "${@}"
+  }
+fi
+
 readonly TEST_DIR=$(mktemp -d)
 
 echo "== Using $TEST_DIR"
