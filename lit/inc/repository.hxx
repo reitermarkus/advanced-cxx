@@ -36,7 +36,7 @@ class Repository {
     string id((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
     id.pop_back();
 
-    return optional(Revision(move(id)));
+    return optional(Revision(id));
   }
 
   void remove_merge_revision() {

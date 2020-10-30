@@ -12,14 +12,13 @@ class Revision {
   unsigned long number_;
 
   public:
-  explicit Revision(string&& id) {
+  explicit Revision(const string& id) {
     if (id[0] != 'r') {
       cerr << "Invalid revision ID: '" << id << "'" << endl;
       abort();
     }
 
-    id.erase(0, 1);
-    this->number_ = stoul(id);
+    this->number_ = stoul(id.substr(1));
   }
   explicit Revision(unsigned long number) {
     this->number_ = number;

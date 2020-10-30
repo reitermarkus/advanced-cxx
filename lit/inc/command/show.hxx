@@ -26,7 +26,7 @@ class ShowCommand: public Command {
     optional<Revision> revision;
 
     if (arguments.size() == 1) {
-      revision = optional(Revision(move(arguments[0])));
+      revision = optional(Revision(arguments[0]));
     } else {
       revision = repo().current_revision();
     }

@@ -36,7 +36,7 @@ class MergeCommand: public Command {
     }
 
     const auto current_revision = repo().current_revision().value();
-    const auto merge_revision = Revision(move(arguments[0]));
+    const auto merge_revision = Revision(arguments[0]);
 
     if (current_revision == merge_revision) {
       cerr << "Cannot merge current revision with itself." << endl;
