@@ -53,8 +53,8 @@ class Repository {
   }
 
   public:
-  explicit Repository(fs::path&& path = fs::current_path()) {
-    this->path = path;
+  explicit Repository() {
+    this->path = fs::current_path();
   }
 
   fs::path dir() {
