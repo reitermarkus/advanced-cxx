@@ -97,7 +97,7 @@ class Commit {
     getline(is, line);
     const auto date = chrono::system_clock::from_time_t(stoul(line));
 
-    string message((istreambuf_iterator<char>(is)), istreambuf_iterator<char>());
+    string message(istreambuf_iterator<char>(is), {});
     message.pop_back();
 
     return Commit(revision, parent_a, parent_b, date, message);
