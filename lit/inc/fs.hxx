@@ -27,7 +27,10 @@ using temp_path = unique_ptr<path, void (*)(path*)>;
 temp_path create_temp_directory() {
   auto pattern = string(temp_directory_path() / "lit.XXXXXX");
 
-  return temp_path(new path(mkdtemp(&pattern[0])), [](fs::path* path) { fs::remove_all(*path); });
+  return temp_path(new path(mkdtemp(&pattern[0])), [](fs::path* path) {
+    fs::remove_all(*path);
+    delete path;
+  });
 }
 
 bool is_lit(const path& p) {
