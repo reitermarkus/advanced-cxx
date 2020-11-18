@@ -8,7 +8,7 @@
 rake build
 ```
 
-## Test
+## Testing
 
 ```shell
 rake test
